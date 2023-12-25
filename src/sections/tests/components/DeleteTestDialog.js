@@ -20,7 +20,7 @@ const DeleteTestDialog = ({ isOpen, onConfirm, onCancel, testName }) => {
       <DialogTitle id="delete-dialog-title">Delete Confirmation</DialogTitle>
       <DialogContent>
         <DialogContentText id="delete-dialog-description">
-          Are you sure you want to delete the test with the name '{testName}'?
+          Are you sure you want to delete the test with the name {testName}?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
