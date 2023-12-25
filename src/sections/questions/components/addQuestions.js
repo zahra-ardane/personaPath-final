@@ -187,32 +187,35 @@ export const AddQuestions = () => {
               container
               spacing={3}
             >
-              <Grid
-                xs={12}
-                md={12}
-              >
-                <TextField
-                  fullWidth
-                  label="English Title"
-                  name="englishText"
-                  onChange={handleChange}
-                  required
-                  value={values.englishText}
-                />
-              </Grid>
-              <Grid
-                xs={12}
-                md={12}
-              >
-                <TextField
-                  fullWidth
-                  label="Persian Title"
-                  name="persianText"
-                  onChange={handleChange}
-                  // required
-                  value={values.persianText}
-                />
-              </Grid>
+            <Grid 
+            xs={12} 
+            md={12}
+            >
+              <TextField
+                fullWidth
+                label="English Title"
+                name="englishText"
+                onChange={handleChange}
+                multiline  
+                rows={4} 
+                required
+                value={values.englishText}
+              />
+            </Grid>
+            <Grid 
+            xs={12} 
+            md={12}
+            >
+              <TextField
+                fullWidth
+                label="Persian Title"
+                name="persianText"
+                onChange={handleChange}
+                multiline  
+                rows={4}  
+                value={values.persianText}
+              />
+            </Grid>
               <Grid
                 xs={12}
                 md={6}

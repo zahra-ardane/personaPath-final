@@ -209,6 +209,8 @@ export const EditQuestion = () => {
                 >
                   <TextField
                     fullWidth
+                    multiline
+                    rows={4} 
                     label="English Title"
                     name="englishText"
                     onChange={handleChange}
@@ -222,10 +224,11 @@ export const EditQuestion = () => {
                 >
                   <TextField
                     fullWidth
+                    multiline
+                    rows={4}
                     label="Persian Title"
                     name="persianText"
                     onChange={handleChange}
-                    // required
                     value={values?.persianText}
                   />
                 </Grid>
