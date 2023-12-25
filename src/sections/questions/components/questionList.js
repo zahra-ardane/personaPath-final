@@ -76,7 +76,7 @@ const QuestionList = ({ questions, test }) => {
     router.push(`/questions/details?data=${encodedQuestionData}`);
   };
 
-  console.log("quesns are ", questions);
+
 
   return (
     <>
