@@ -22,7 +22,7 @@ const DeleteTestDialog = ({ isOpen, onConfirm, onCancel, questionName }) => {
       <DialogContent>
         <DialogContentText id="delete-dialog-description">
           <Typography variant="body2" style={{ height: 'auto', overflow: 'hidden' }}>
-            Are you sure you want to delete the question with the name '{questionName}'?
+            Are you sure you want to delete the question with the name {questionName}?
           </Typography>
         </DialogContentText>
       </DialogContent>
