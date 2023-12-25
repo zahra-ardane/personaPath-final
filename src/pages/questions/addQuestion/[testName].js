@@ -1,14 +1,13 @@
 import Head from 'next/head';
 import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { AccountProfile } from 'src/sections/account/account-profile';
-import { AccountProfileDetails } from 'src/sections/account/account-profile-details';
+import { AddQuestions } from 'src/sections/questions/components/addQuestions';
 
 const Page = () => (
   <>
     <Head>
       <title>
-        Account | Devias Kit
+        Create questions
       </title>
     </Head>
     <Box
@@ -22,28 +21,16 @@ const Page = () => (
         <Stack spacing={3}>
           <div>
             <Typography variant="h4">
-              Account
+              Create your personality test questions here!
             </Typography>
           </div>
           <div>
             <Grid
-              container
-              spacing={3}
+              xs={12}
+              md={6}
+              lg={8}
             >
-              <Grid
-                xs={12}
-                md={6}
-                lg={4}
-              >
-                <AccountProfile />
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-                lg={8}
-              >
-                <AccountProfileDetails />
-              </Grid>
+              <AddQuestions />
             </Grid>
           </div>
         </Stack>

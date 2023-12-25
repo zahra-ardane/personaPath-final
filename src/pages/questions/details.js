@@ -1,27 +1,26 @@
+// pages/questions/questionDetails.js
 import Head from 'next/head';
 import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { TestList } from 'src/sections/tests/components/testList';
+import QuestionDetails from '../../sections/questions/components/questionDetails'; // Import the QuestionDetails component
 
-const Page = () => (
+const QuestionDetailsPage = () => (
   <>
     <Head>
-      <title>
-        Your tests
-      </title>
+      <title>Question Details</title>
     </Head>
     <Box
       component="main"
       sx={{
         flexGrow: 1,
-        py: 8
+        py: 8,
       }}
     >
       <Container maxWidth="lg">
         <Stack spacing={3}>
           <div>
             <Typography variant="h4">
-              Create, see and change your personality tests here!
+              Question Details
             </Typography>
           </div>
           <div>
@@ -30,7 +29,7 @@ const Page = () => (
               md={6}
               lg={8}
             >
-              <TestList />
+              <QuestionDetails />
             </Grid>
           </div>
         </Stack>
@@ -39,10 +38,10 @@ const Page = () => (
   </>
 );
 
-Page.getLayout = (page) => (
+QuestionDetailsPage.getLayout = (page) => (
   <DashboardLayout>
     {page}
   </DashboardLayout>
 );
 
-export default Page;
+export default QuestionDetailsPage;

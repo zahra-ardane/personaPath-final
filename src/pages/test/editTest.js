@@ -1,14 +1,13 @@
 import Head from 'next/head';
-import { Box, Container, Stack, Typography } from '@mui/material';
-import { SettingsNotifications } from 'src/sections/settings/settings-notifications';
-import { SettingsPassword } from 'src/sections/settings/settings-password';
+import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
+import { EditTest } from '../../sections/tests/components/editTest'
 
 const Page = () => (
   <>
     <Head>
       <title>
-        Settings | Devias Kit
+        Edit test
       </title>
     </Head>
     <Box
@@ -20,11 +19,20 @@ const Page = () => (
     >
       <Container maxWidth="lg">
         <Stack spacing={3}>
-          <Typography variant="h4">
-            Settings
-          </Typography>
-          <SettingsNotifications />
-          <SettingsPassword />
+          <div>
+            <Typography variant="h4">
+              Edit your personality test here!
+            </Typography>
+          </div>
+          <div>
+            <Grid
+              xs={12}
+              md={6}
+              lg={8}
+            >
+              <EditTest />
+            </Grid>
+          </div>
         </Stack>
       </Container>
     </Box>

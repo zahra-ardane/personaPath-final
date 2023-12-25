@@ -1,13 +1,13 @@
 import Head from 'next/head';
 import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { TestList } from 'src/sections/tests/components/testList';
+import { EditQuestion } from '../../sections/questions/components/editQuestion'
 
 const Page = () => (
   <>
     <Head>
       <title>
-        Your tests
+        Edit test
       </title>
     </Head>
     <Box
@@ -21,7 +21,7 @@ const Page = () => (
         <Stack spacing={3}>
           <div>
             <Typography variant="h4">
-              Create, see and change your personality tests here!
+              Edit your personality test's question here!
             </Typography>
           </div>
           <div>
@@ -30,7 +30,7 @@ const Page = () => (
               md={6}
               lg={8}
             >
-              <TestList />
+              <EditQuestion />
             </Grid>
           </div>
         </Stack>
