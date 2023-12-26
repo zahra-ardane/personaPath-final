@@ -9,6 +9,7 @@ import {
   CardHeader,
   Divider,
   TextField,
+  Typography,
   Unstable_Grid2 as Grid
 } from '@mui/material';
 import postQuestion from '../api/postQuestion';
@@ -119,6 +120,53 @@ export const AddQuestions = () => {
         ...prevState,
         options: [...prevState.options, { englishOptionText: '', persianOptionText: '' }],
       }));
+    }
+  };
+
+  const handleMultipleChoiceType = (event) => {
+    const { value } = event.target;
+  
+    // Handle changes based on the selected multiple-choice type
+    switch (value) {
+      case 'yesNo':
+        setValues((prevState) => ({
+          ...prevState,
+          options: [
+            { englishOptionText: 'Yes', persianOptionText: 'بلی' },
+            { englishOptionText: 'No', persianOptionText: 'خیر' },
+          ],
+        }));
+        break;
+      case 'agreeDisagreeNeutral':
+        setValues((prevState) => ({
+          ...prevState,
+          options: [
+            { englishOptionText: 'Agree', persianOptionText: 'موافق' },
+            { englishOptionText: 'Neither Agree nor Disagree', persianOptionText: 'خنثی' },
+            { englishOptionText: 'Disagree', persianOptionText: 'مخالف' },
+          ],
+        }));
+        break;
+      case 'completelyDisagreeAgree':
+        setValues((prevState) => ({
+          ...prevState,
+          options: [
+            { englishOptionText: 'Strongly Disagree', persianOptionText: 'کاملاً مخالف' },
+            { englishOptionText: 'Disagree', persianOptionText: 'مخالف' },
+            { englishOptionText: 'Neither Agree nor Disagree', persianOptionText: 'خنثی' },
+            { englishOptionText: 'Agree', persianOptionText: 'موافق' },
+            { englishOptionText: 'Strongly Agree', persianOptionText: 'کاملاً موافق' },
+          ],
+        }));
+        break;
+      default:
+        // Default case: Add a generic empty option
+        setValues((prevState) => ({
+          ...prevState,
+          options: [
+            { englishOptionText: '', persianOptionText: '' },
+          ],
+        }));
     }
   };
 
@@ -266,6 +314,55 @@ export const AddQuestions = () => {
                   ))}
                 </TextField>
               </Grid>
+
+              <Grid
+                xs={12}
+                md={12}
+              >
+                {/* Radio buttons for multiple-choice options */}
+                {values.type == '0' && (
+
+                  <div>
+                    <Typography variant="body1" sx={{ color: '#777', mb: 1 }}>
+                      Multiple Choice Type:
+                    </Typography>
+                    <div>
+                      <label>
+                        <input
+                          type="radio"
+                          name="multipleChoiceType"
+                          value="yesNo"
+                          onChange={handleMultipleChoiceType}
+                        />
+                        Yes/No
+                      </label>
+                    </div>
+                    <div>
+                      <label>
+                        <input
+                          type="radio"
+                          name="multipleChoiceType"
+                          value="agreeDisagreeNeutral"
+                          onChange={handleMultipleChoiceType}
+                        />
+                        Agree/Disagree/Neutral
+                      </label>
+                    </div>
+                    <div>
+                      <label>
+                        <input
+                          type="radio"
+                          name="multipleChoiceType"
+                          value="completelyDisagreeAgree"
+                          onChange={handleMultipleChoiceType}
+                        />
+                        Completely Disagree/Disagree/Neutral/Agree/Completely Agree
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </Grid>
+
               <Grid
                 xs={12}
                 md={6}
@@ -305,7 +402,7 @@ export const AddQuestions = () => {
                       label={`Option ${index + 1} - English`}
                       name={`option${index + 1}-englishOptionText`}
                       onChange={handleChange}
-                      value={option.englishText}
+                      value={option.englishOptionText}
                       style={{ display: values.type === '0' ? 'block' : 'none' }}
                     />
                   </Grid>
@@ -319,7 +416,7 @@ export const AddQuestions = () => {
                       label={`Option ${index + 1} - Persian`}
                       name={`option${index + 1}-persianOptionText`}
                       onChange={handleChange}
-                      value={option.persianText}
+                      value={option.persianOptionText}
                       style={{ display: values.type === '0' ? 'block' : 'none' }}
                     />
                   </Grid>
