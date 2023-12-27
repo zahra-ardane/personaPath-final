@@ -4,7 +4,7 @@ import axiosInstance from '../../../lib/axiosInstance';
 const editTest = async (testData) => {
   try {
     console.log("in edit test", testData);
-    const response = await axiosInstance.put(`/test/${testData.id}`, testData);
+    const response = await axiosInstance.put(`/test/updateTestById/${testData.id}`, testData);
     return response.data;
     // return (
     //   { id: 3, name: 'test', created: '2023-11-04 12:56', levels: '2', about: "This is a personality test called test" }

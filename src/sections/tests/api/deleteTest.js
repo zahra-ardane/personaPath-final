@@ -4,8 +4,7 @@ import axiosInstance from '../../../lib/axiosInstance';
 const deleteTest = async (testId) => {
   try {
     console.log("in delete test api", testId);
-    // Perform the API request to delete the test with the specified ID
-    await axiosInstance.delete(`/test/${testId}`);
+    await axiosInstance.delete(`/test/deleteTestById/${testId}`);
   } catch (error) {
     console.error('Error deleting test:', error);
     throw error;

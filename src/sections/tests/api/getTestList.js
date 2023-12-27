@@ -3,7 +3,7 @@ import axiosInstance from '../../../lib/axiosInstance';
 
 const getTestList = async () => {
   try {
-    const response = await axiosInstance.get('/test'); 
+    const response = await axiosInstance.get('/test/getTestList'); 
     return response.data;
 
     // return ([
