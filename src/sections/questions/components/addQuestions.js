@@ -71,8 +71,8 @@ export const AddQuestions = () => {
           setValues((prevState) => ({
             ...prevState,
             options: [
-              { englishOptionText: '', persianOptionText: '' },
-              { englishOptionText: '', persianOptionText: '' },
+              { english: '', persian: '' },
+              { english: '', persian: '' },
             ],
           }));
         }
@@ -112,13 +112,13 @@ export const AddQuestions = () => {
         ...prevState,
         options: [
           ...prevState.options,
-          { englishOptionText: '', persianOptionText: '' }        ],
+          { egnlish: '', persian: '' }        ],
       }));
     } else {
       // For other types, add a single empty option
       setValues((prevState) => ({
         ...prevState,
-        options: [...prevState.options, { englishOptionText: '', persianOptionText: '' }],
+        options: [...prevState.options, { english: '', persian: '' }],
       }));
     }
   };
@@ -132,8 +132,8 @@ export const AddQuestions = () => {
         setValues((prevState) => ({
           ...prevState,
           options: [
-            { englishOptionText: 'Yes', persianOptionText: 'بلی' },
-            { englishOptionText: 'No', persianOptionText: 'خیر' },
+            { english: 'Yes', persian: 'بلی' },
+            { english: 'No', persian: 'خیر' },
           ],
         }));
         break;
@@ -141,9 +141,9 @@ export const AddQuestions = () => {
         setValues((prevState) => ({
           ...prevState,
           options: [
-            { englishOptionText: 'Agree', persianOptionText: 'موافق' },
-            { englishOptionText: 'Neither Agree nor Disagree', persianOptionText: 'خنثی' },
-            { englishOptionText: 'Disagree', persianOptionText: 'مخالف' },
+            { english: 'Agree', persian: 'موافق' },
+            { english: 'Neither Agree nor Disagree', persian: 'خنثی' },
+            { english: 'Disagree', persian: 'مخالف' },
           ],
         }));
         break;
@@ -151,11 +151,11 @@ export const AddQuestions = () => {
         setValues((prevState) => ({
           ...prevState,
           options: [
-            { englishOptionText: 'Strongly Disagree', persianOptionText: 'کاملاً مخالف' },
-            { englishOptionText: 'Disagree', persianOptionText: 'مخالف' },
-            { englishOptionText: 'Neither Agree nor Disagree', persianOptionText: 'خنثی' },
-            { englishOptionText: 'Agree', persianOptionText: 'موافق' },
-            { englishOptionText: 'Strongly Agree', persianOptionText: 'کاملاً موافق' },
+            { english: 'Strongly Disagree', persian: 'کاملاً مخالف' },
+            { english: 'Disagree', persian: 'مخالف' },
+            { english: 'Neither Agree nor Disagree', persian: 'خنثی' },
+            { english: 'Agree', persian: 'موافق' },
+            { english: 'Strongly Agree', persian: 'کاملاً موافق' },
           ],
         }));
         break;
@@ -164,7 +164,7 @@ export const AddQuestions = () => {
         setValues((prevState) => ({
           ...prevState,
           options: [
-            { englishOptionText: '', persianOptionText: '' },
+            { english: '', persian: '' },
           ],
         }));
     }
@@ -186,8 +186,12 @@ export const AddQuestions = () => {
 
         // Your submission logic goes here
         const questionData = {
-          englishText: values.englishText,
-          persianText: values.persianText,
+          // englishText: values.englishText,
+          // persianText: values.persianText,
+          questionText: {
+            english: values.englishText,
+            persian: values.persianText
+          },
           level: Number(values.level),
           type: Number(values.type),
           answerCount: values.answerCount,
@@ -400,9 +404,9 @@ export const AddQuestions = () => {
                     <TextField
                       fullWidth
                       label={`Option ${index + 1} - English`}
-                      name={`option${index + 1}-englishOptionText`}
+                      name={`option${index + 1}-english`}
                       onChange={handleChange}
-                      value={option.englishOptionText}
+                      value={option.english}
                       style={{ display: values.type === '0' ? 'block' : 'none' }}
                     />
                   </Grid>
@@ -414,9 +418,9 @@ export const AddQuestions = () => {
                     <TextField
                       fullWidth
                       label={`Option ${index + 1} - Persian`}
-                      name={`option${index + 1}-persianOptionText`}
+                      name={`option${index + 1}-persian`}
                       onChange={handleChange}
-                      value={option.persianOptionText}
+                      value={option.persian}
                       style={{ display: values.type === '0' ? 'block' : 'none' }}
                     />
                   </Grid>

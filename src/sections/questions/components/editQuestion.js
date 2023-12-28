@@ -48,19 +48,17 @@ export const EditQuestion = () => {
       // Parse the test data from the query parameter
       setValues(propsData.question);
        // Transform options format
-      const transformedOptions = propsData.question.options.map((option) => ({
-        englishOptionText: option.optionText.English || '',
-        persianOptionText: option.optionText.Persian || '',
-      }));
+      // const transformedOptions = propsData.question.options.map((option) => ({
+      //   english: option.optionText.English || '',
+      //   persianOptionText: option.optionText.Persian || '',
+      // }));
 
-      console.log("transformedOptions", transformedOptions);
-
-      setValues((prevValues) => ({
-        ...prevValues,
-        englishText: propsData.question.questionText.English || '',
-        persianText: propsData.question.questionText.Persian || '',
-        options: transformedOptions,
-      }));
+      // setValues((prevValues) => ({
+      //   ...prevValues,
+      //   englishText: propsData.question.questionText.English || '',
+      //   persianText: propsData.question.questionText.Persian || '',
+      //   options: transformedOptions,
+      // }));
 
       setTest(propsData.test);
 
@@ -85,8 +83,8 @@ export const EditQuestion = () => {
           setValues((prevState) => ({
             ...prevState,
             options: [
-              { englishOptionText: '', persianOptionText: '' },
-              { englishOptionText: '', persianOptionText: '' },
+              { english: '', persian: '' },
+              { english: '', persian: '' },
             ],
           }));
         }
@@ -108,7 +106,19 @@ export const EditQuestion = () => {
           ...prevState,
           options: updatedOptions,
         }));
+      } else if (name.startsWith('questionText')) {
+        // Handle changes for individual options
+        const [questionTextPart, language] = name.split('.');
+        setValues((prevState) => ({
+          ...prevState,
+          [questionTextPart]: {
+            ...prevState[questionTextPart],
+            [language]: value,
+          },
+        }));
+        
       } else {
+        console.log("name and value in else are ", name, value);
         setValues((prevState) => ({
           ...prevState,
           [name]: value,
@@ -126,13 +136,13 @@ export const EditQuestion = () => {
         ...prevState,
         options: [
           ...prevState.options,
-          { englishOptionText: '', persianOptionText: '' }        ],
+          { english: '', persian: '' }        ],
       }));
     } else {
       // For other types, add a single empty option
       setValues((prevState) => ({
         ...prevState,
-        options: [...prevState.options, { englishOptionText: '', persianOptionText: '' }],
+        options: [...prevState.options, { english: '', persian: '' }],
       }));
     }
   };
@@ -146,8 +156,8 @@ export const EditQuestion = () => {
         setValues((prevState) => ({
           ...prevState,
           options: [
-            { englishOptionText: 'Yes', persianOptionText: 'بلی' },
-            { englishOptionText: 'No', persianOptionText: 'خیر' },
+            { english: 'Yes', persian: 'بلی' },
+            { english: 'No', persian: 'خیر' },
           ],
         }));
         break;
@@ -155,9 +165,9 @@ export const EditQuestion = () => {
         setValues((prevState) => ({
           ...prevState,
           options: [
-            { englishOptionText: 'Agree', persianOptionText: 'موافق' },
-            { englishOptionText: 'Neither Agree nor Disagree', persianOptionText: 'خنثی' },
-            { englishOptionText: 'Disagree', persianOptionText: 'مخالف' },
+            { english: 'Agree', persian: 'موافق' },
+            { english: 'Neither Agree nor Disagree', persian: 'خنثی' },
+            { english: 'Disagree', persian: 'مخالف' },
           ],
         }));
         break;
@@ -165,11 +175,11 @@ export const EditQuestion = () => {
         setValues((prevState) => ({
           ...prevState,
           options: [
-            { englishOptionText: 'Strongly Disagree', persianOptionText: 'کاملاً مخالف' },
-            { englishOptionText: 'Disagree', persianOptionText: 'مخالف' },
-            { englishOptionText: 'Neither Agree nor Disagree', persianOptionText: 'خنثی' },
-            { englishOptionText: 'Agree', persianOptionText: 'موافق' },
-            { englishOptionText: 'Strongly Agree', persianOptionText: 'کاملاً موافق' },
+            { english: 'Strongly Disagree', persian: 'کاملاً مخالف' },
+            { english: 'Disagree', persian: 'مخالف' },
+            { english: 'Neither Agree nor Disagree', persian: 'خنثی' },
+            { english: 'Agree', persian: 'موافق' },
+            { english: 'Strongly Agree', persian: 'کاملاً موافق' },
           ],
         }));
         break;
@@ -178,7 +188,7 @@ export const EditQuestion = () => {
         setValues((prevState) => ({
           ...prevState,
           options: [
-            { englishOptionText: '', persianOptionText: '' },
+            { english: '', persian: '' },
           ],
         }));
     }
@@ -190,7 +200,7 @@ export const EditQuestion = () => {
 
       try {
         // Check if required fields are filled
-        if (!values.englishText || !values.level ) {
+        if (!values?.questionText?.english || !values?.level ) {
           // You can provide user feedback here, e.g., show an error message
           // console.error('Please fill in the required fields.');
           alert('Please fill in the required fields.');
@@ -199,8 +209,9 @@ export const EditQuestion = () => {
 
         // Your submission logic goes here
         const questionData = {
-          englishText: values.englishText,
-          persianText: values.persianText,
+          // englishText: values.englishText,
+          // persianText: values.persianText,
+          questionText: values.questionText,
           level: Number(values.level),
           type: Number(values.type),
           answerCount: Number(values.answerCount),
@@ -260,10 +271,10 @@ export const EditQuestion = () => {
                     multiline
                     rows={4} 
                     label="English Title"
-                    name="englishText"
+                    name="questionText.english"
                     onChange={handleChange}
                     required
-                    value={values?.englishText}
+                    value={values?.questionText?.english}
                   />
                 </Grid>
                 <Grid
@@ -275,9 +286,9 @@ export const EditQuestion = () => {
                     multiline
                     rows={4}
                     label="Persian Title"
-                    name="persianText"
+                    name="questionText.persian"
                     onChange={handleChange}
-                    value={values?.persianText}
+                    value={values?.questionText?.persian}
                   />
                 </Grid>
                 <Grid
@@ -414,9 +425,9 @@ export const EditQuestion = () => {
                       <TextField
                         fullWidth
                         label={`Option ${index + 1} - English`}
-                        name={`option${index + 1}-englishOptionText`}
+                        name={`option${index + 1}-english`}
                         onChange={handleChange}
-                        value={option.englishOptionText}
+                        value={option.english}
                         style={{ display: values.type == '0' ? 'block' : 'none' }}
                       />
                     </Grid>
@@ -428,9 +439,9 @@ export const EditQuestion = () => {
                       <TextField
                         fullWidth
                         label={`Option ${index + 1} - Persian`}
-                        name={`option${index + 1}-persianOptionText`}
+                        name={`option${index + 1}-persian`}
                         onChange={handleChange}
-                        value={option.persianOptionText}
+                        value={option.persian}
                         style={{ display: values.type == '0' ? 'block' : 'none' }}
                       />
                     </Grid>

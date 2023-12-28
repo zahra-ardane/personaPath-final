@@ -94,7 +94,7 @@ const QuestionList = ({ questions, test }) => {
             {questions.map((question) => (
               <TableRow key={question.id} onClick={() => handleQuestionClick(question)}>
                 <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                  {question?.questionText?.English}
+                  {question?.questionText?.english}
                 </TableCell>
                 <TableCell align="right">{question.level}</TableCell>
                 <TableCell align="right">{getQuestionTypeLabel(question.type)}</TableCell>
@@ -127,7 +127,7 @@ const QuestionList = ({ questions, test }) => {
           isOpen={isDeleteDialogOpen}
           onConfirm={handleDeleteConfirm}
           onCancel={handleDeleteCancel}
-          questionName={selectedQuestion?.questionText?.English}
+          questionName={selectedQuestion?.questionText?.english}
         />
       )}
     </>

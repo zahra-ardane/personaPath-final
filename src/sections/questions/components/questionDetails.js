@@ -38,7 +38,6 @@ const QuestionDetails = () => {
     );
   }
 
-  console.log("loooooooooooooooooooooogggggggggggg ", questionData);
 
   return (
     <>
@@ -54,12 +53,12 @@ const QuestionDetails = () => {
 
 
       <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
-        English Title: {questionData?.questionText?.English}
+        English Title: {questionData?.questionText?.english}
       </Typography>
 
       <Box sx={{ mb: 2 }}>
         <Typography variant="body1">
-          Persian Title: {questionData?.questionText?.Persian || ''}
+          Persian Title: {questionData?.questionText?.persian || ''}
         </Typography>
       </Box>
 
@@ -86,7 +85,7 @@ const QuestionDetails = () => {
           <ul>
             {questionData.options.map((option, index) => (
               <li key={index}>
-                {option.optionText.English} - {option.optionText.Persian || 'Not available'}
+                {option.english} - {option.persian || 'Not available'}
               </li>
             ))}
           </ul>
