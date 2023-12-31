@@ -420,7 +420,7 @@ export const EditQuestion = () => {
                     <Grid
                       key={`${index}-english`}
                       xs={12}
-                      md={12}
+                      md={6}
                     >
                       <TextField
                         fullWidth
@@ -434,7 +434,7 @@ export const EditQuestion = () => {
                     <Grid
                       key={`${index}-persian`}
                       xs={12}
-                      md={12}
+                      md={6}
                     >
                       <TextField
                         fullWidth

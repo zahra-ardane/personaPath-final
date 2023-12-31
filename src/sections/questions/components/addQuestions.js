@@ -399,7 +399,7 @@ export const AddQuestions = () => {
                   <Grid
                     key={`${index}-english`}
                     xs={12}
-                    md={12}
+                    md={6}
                   >
                     <TextField
                       fullWidth
@@ -413,7 +413,7 @@ export const AddQuestions = () => {
                   <Grid
                     key={`${index}-persian`}
                     xs={12}
-                    md={12}
+                    md={6}
                   >
                     <TextField
                       fullWidth
