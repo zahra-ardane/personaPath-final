@@ -3,7 +3,6 @@ import axiosInstance from '../../../lib/axiosInstance';
 
 const editTest = async (testData) => {
   try {
-    console.log("in edit test", testData);
     const response = await axiosInstance.put(`/test/updateTestById/${testData.id}`, testData);
     return response.data;
     // return (

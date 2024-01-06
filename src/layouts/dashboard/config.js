@@ -27,5 +27,14 @@ export const items = [
         <PlusCircleIcon />
       </SvgIcon>
     )
+  },
+  {
+    title: 'Prompts',
+    path: '/prompts/promptList',
+    icon: (
+      <SvgIcon fontSize="small">
+        <PlusCircleIcon />
+      </SvgIcon>
+    )
   }
 ];
