@@ -12,30 +12,27 @@ const Container = styled('div')(({ theme }) => ({
   padding: theme.spacing(2),
 }));
 
-const StepContainer = styled('div')({
+const StepCard = styled('div')(({ theme, type }) => ({
+  background: type === 'test' ? theme.palette.primary.main : theme.palette.secondary.main,
+  color: theme.palette.common.white,
+  padding: theme.spacing(2),
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[3],
+  marginBottom: theme.spacing(2),
   display: 'flex',
-  flexDirection: 'column',
   alignItems: 'center',
-});
-
-const Step = styled('div')(({ theme }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    marginTop: theme.spacing(1),
-    '& > *': {
-      margin: theme.spacing(1), // Add margin to the Select components
-    },
-  }));
-  
-
-const Arrow = styled(Typography)(({ theme }) => ({
-  marginRight: theme.spacing(1),
-  fontSize: '1.5rem',
 }));
 
+const StepIcon = styled('div')(({ theme }) => ({
+  marginRight: theme.spacing(3),
+  marginLeft: theme.spacing(2),
+  width: '24px',
+  height: '24px',
+  display: 'flex',
+  alignItems: 'center', 
+  overflow: 'hidden',
+}));
 
-
-// ... (previous imports and styled components)
 
 export const AddWorkflow = () => {
   const [steps, setSteps] = useState([{ type: 'test', data: '' }, { type: 'prompt', data: '' }]);
@@ -100,47 +97,55 @@ export const AddWorkflow = () => {
   return (
     <Container>
       {steps.map((step, index) => (
-        <StepContainer key={index}>
-          <Step>
-            <Select
-              value={step.type}
-              onChange={(e) => handleStepTypeChange(e, index)}
-              disabled={index === 0 || index === steps.length - 1}
-            >
-              <MenuItem value="test">Test</MenuItem>
-              <MenuItem value="prompt" disabled={index === steps.length - 1}>
-                Prompt
-              </MenuItem>
-            </Select>
-            <Select value={step.data} onChange={(e) => handleDataChange(e, index)}>
-              {step.type === 'test'
-                ? testList.map((test, i) => {
-                    if (test.level > 1) {
-                      // Display multiple levels as separate options
-                      const levels = Array.from({ length: test.level }, (_, j) => j + 1);
-                      return levels.map((level) => (
-                        <MenuItem key={`${i}-${level}`} value={`${test.name} - Level ${level}`}>
-                          {`${test.name} - Level ${level}`}
-                        </MenuItem>
-                      ));
-                    } else {
-                      // Display single level option
-                      return (
-                        <MenuItem key={i} value={test.name}>
-                          {test.name}
-                        </MenuItem>
-                      );
-                    }
-                  })
-                : promptList.map((prompt, i) => (
-                    <MenuItem key={i} value={prompt.title}>
-                      {prompt.title}
-                    </MenuItem>
-                  ))}
-            </Select>
-          </Step>
-          {index < steps.length - 1 && <Arrow variant="h5">&#8595;</Arrow>}
-        </StepContainer>
+        <StepCard key={index} style={{ background: step.type === 'test' ? '#e4e9ed' : '#d9cfe6' }}>
+          <StepIcon>
+            {step.type === 'test' ? (
+              <img src="/assets/test.png" alt="Test Icon" style={{ width: '100%', height: '100%' }} />
+            ) : (
+              <img src="/assets/comment.png" alt="Prompt Icon" style={{ width: '100%', height: '100%' }} />
+            )}
+          </StepIcon>       
+          <Typography variant="h6" sx={{ color: "#07010f", marginRight: "10px" }} >{`${index + 1}.`}</Typography>
+          <Select
+            value={step.type}
+            onChange={(e) => handleStepTypeChange(e, index)}
+            disabled={index === 0 || index === steps.length - 1}
+            style={{ margin: '0 10px' }}
+          >
+            <MenuItem value="test">Test</MenuItem>
+            <MenuItem value="prompt" disabled={index === steps.length - 1}>
+              Prompt
+            </MenuItem>
+          </Select>
+          <Select
+            value={step.data}
+            onChange={(e) => handleDataChange(e, index)}
+            style={{ margin: '0 10px' }}
+          >
+            {step.type === 'test'
+              ? testList.map((test, i) => {
+                  if (test.level > 1) {
+                    const levels = Array.from({ length: test.level }, (_, j) => j + 1);
+                    return levels.map((level) => (
+                      <MenuItem key={`${i}-${level}`} value={`${test.name} - Level ${level}`}>
+                        {`${test.name} - Level ${level}`}
+                      </MenuItem>
+                    ));
+                  } else {
+                    return (
+                      <MenuItem key={i} value={test.name}>
+                        {test.name}
+                      </MenuItem>
+                    );
+                  }
+                })
+              : promptList.map((prompt, i) => (
+                  <MenuItem key={i} value={prompt.title}>
+                    {prompt.title}
+                  </MenuItem>
+                ))}
+          </Select>
+        </StepCard>
       ))}
       <Button variant="contained" onClick={handleAddStep}>
         New Step
@@ -148,8 +153,5 @@ export const AddWorkflow = () => {
     </Container>
   );
 };
-
-
-
 
 
