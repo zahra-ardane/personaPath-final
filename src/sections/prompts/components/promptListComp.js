@@ -116,7 +116,7 @@ export const PromptList = () => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>prompt</TableCell>
+                      <TableCell>Title</TableCell>
                       <TableCell align="right">Date</TableCell>
                       <TableCell align="right">Actions</TableCell>
                     </TableRow>
@@ -129,7 +129,7 @@ export const PromptList = () => {
                         style={{ cursor: 'pointer' }}
                       >
                         <TableCell component="th" scope="row">
-                          {prompt.text}
+                          {prompt.title}
                         </TableCell>
                         <TableCell align="right">
                           {new Date(prompt.dateTime).toLocaleString('en-US', {
@@ -185,7 +185,7 @@ export const PromptList = () => {
           isOpen={isDeleteDialogOpen}
           onConfirm={handleDeleteConfirm}
           onCancel={handleDeleteCancel}
-          // testName={selectedTest.name} 
+          promptName={selectedPrompt.title} 
         />
       )}
     </>

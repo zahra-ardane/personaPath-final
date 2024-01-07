@@ -50,7 +50,8 @@ export const EditPrompt = () => {
       try {
 
         const data = {
-          text: values.text
+          text: values.text,
+          title: values.title
         }
 
         await editPrompt(values.id, data);
@@ -85,7 +86,7 @@ export const EditPrompt = () => {
                 container
                 spacing={3}
               >
-                {/* <Grid
+                <Grid
                   xs={12}
                   md={6}
                 >
@@ -97,7 +98,7 @@ export const EditPrompt = () => {
                     required
                     value={values.title}
                   />
-                </Grid> */}
+                </Grid>
                 <Grid
                   xs={12}
                   md={12}
@@ -108,6 +109,7 @@ export const EditPrompt = () => {
                     name="text"
                     onChange={handleChange}
                     multiline
+                    required
                     rows={4}
                     value={values.text}
                   />

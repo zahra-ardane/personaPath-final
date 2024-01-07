@@ -9,7 +9,7 @@ import {
   Button,
 } from '@mui/material';
 
-const DeletePromptDialog = ({ isOpen, onConfirm, onCancel }) => { //, testName
+const DeletePromptDialog = ({ isOpen, onConfirm, onCancel, promptName }) => {
   return (
     <Dialog
       open={isOpen}
@@ -20,8 +20,7 @@ const DeletePromptDialog = ({ isOpen, onConfirm, onCancel }) => { //, testName
       <DialogTitle id="delete-dialog-title">Delete Confirmation</DialogTitle>
       <DialogContent>
         <DialogContentText id="delete-dialog-description">
-          {/* Are you sure you want to delete the prompt with the name {testName}? */}
-          Are you sure you want to delete this prompt ?
+          Are you sure you want to delete the prompt with the name {promptName}?
         </DialogContentText>
       </DialogContent>
       <DialogActions>

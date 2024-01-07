@@ -36,5 +36,14 @@ export const items = [
         <PlusCircleIcon />
       </SvgIcon>
     )
+  },
+  {
+    title: 'Workflow',
+    path: '/workflow/addWorkflow',
+    icon: (
+      <SvgIcon fontSize="small">
+        <PlusCircleIcon />
+      </SvgIcon>
+    )
   }
 ];

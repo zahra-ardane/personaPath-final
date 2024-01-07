@@ -37,7 +37,7 @@ const PromptDetails = () => {
     <>
 
       <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-        Prompt Details
+        {prompt.title}
       </Typography>
 
       <Divider sx={{ my: 2 }} />

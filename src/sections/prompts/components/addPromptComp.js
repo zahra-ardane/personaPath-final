@@ -17,7 +17,7 @@ import postPrompt from '../api/postPrompt';
 export const AddPrompt = () => {
   const [values, setValues] = useState({
     text: '',
-    // title
+    title: ''
   });
 
   const router = useRouter();
@@ -37,8 +37,8 @@ export const AddPrompt = () => {
   
       try {
         // Check if required fields are filled
-        if (!values?.text) {
-          alert('Please fill in the prompt field.');
+        if (!values?.text || !values?.title) {
+          alert('Please fill in the required fields.');
           return;
         }
 
@@ -78,19 +78,19 @@ export const AddPrompt = () => {
               container
               spacing={3}
             >
-              {/* <Grid
+              <Grid
                 xs={12}
                 md={12}
               >
                 <TextField
                   fullWidth
-                  label="Title of Prompt"
+                  label="Title"
                   name="title"
                   onChange={handleChange}
                   required 
                   value={values.title}
                 />
-              </Grid> */}
+              </Grid>
               <Grid
                 xs={12}
                 md={12}
@@ -101,6 +101,7 @@ export const AddPrompt = () => {
                   name="text"
                   onChange={handleChange}
                   multiline
+                  required
                   rows={4}
                   value={values.text}
                 />
