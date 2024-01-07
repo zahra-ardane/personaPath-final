@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Button, MenuItem, Select, Typography } from '@mui/material';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Button, MenuItem, Select, Typography, TextField } from '@mui/material';
 import { styled } from '@mui/system';
 
 // ** API imports
 import getTestList from '../tests/api/getTestList';
 import getPrompts from '../prompts/api/getPrompts';
-
-
 
 const Container = styled('div')(({ theme }) => ({
   padding: theme.spacing(2),
@@ -29,12 +27,14 @@ const StepIcon = styled('div')(({ theme }) => ({
   width: '24px',
   height: '24px',
   display: 'flex',
-  alignItems: 'center', 
+  alignItems: 'center',
   overflow: 'hidden',
 }));
 
-
 export const AddWorkflow = () => {
+  const [values, setValues] = useState({
+    name: ''
+});
   const [steps, setSteps] = useState([{ type: 'test', data: '' }, { type: 'prompt', data: '' }]);
   const [testList, setTestList] = useState([]);
   const [promptList, setPromptList] = useState([]);
@@ -46,7 +46,7 @@ export const AddWorkflow = () => {
         const tests = await getTestList();
         setTestList(tests);
       } catch (error) {
-        console.log("error while fetching tests", error);
+        console.log('error while fetching tests', error);
       } finally {
         setIsLoading(false);
       }
@@ -57,7 +57,7 @@ export const AddWorkflow = () => {
         const prompts = await getPrompts();
         setPromptList(prompts);
       } catch (error) {
-        console.log("error while fetching prompt list", error);
+        console.log('error while fetching prompt list', error);
       } finally {
         setIsLoading(false);
       }
@@ -94,8 +94,26 @@ export const AddWorkflow = () => {
     setSteps(updatedSteps);
   };
 
+  const handleChange = useCallback((event) => {
+    const { name, value } = event.target;
+
+    setValues((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  }, []);
+
+
   return (
     <Container>
+      <TextField sx={{ marginBottom: '20px' }}
+        fullWidth
+        label="Workflow Name"
+        name="name"
+        onChange={handleChange}
+        required 
+        value={values.name}
+      />
       {steps.map((step, index) => (
         <StepCard key={index} style={{ background: step.type === 'test' ? '#e4e9ed' : '#d9cfe6' }}>
           <StepIcon>
@@ -104,8 +122,8 @@ export const AddWorkflow = () => {
             ) : (
               <img src="/assets/comment.png" alt="Prompt Icon" style={{ width: '100%', height: '100%' }} />
             )}
-          </StepIcon>       
-          <Typography variant="h6" sx={{ color: "#07010f", marginRight: "10px" }} >{`${index + 1}.`}</Typography>
+          </StepIcon>
+          <Typography variant="h6" sx={{ color: '#07010f', marginRight: '10px' }}>{`${index + 1}.`}</Typography>
           <Select
             value={step.type}
             onChange={(e) => handleStepTypeChange(e, index)}
@@ -124,26 +142,26 @@ export const AddWorkflow = () => {
           >
             {step.type === 'test'
               ? testList.map((test, i) => {
-                  if (test.level > 1) {
-                    const levels = Array.from({ length: test.level }, (_, j) => j + 1);
-                    return levels.map((level) => (
-                      <MenuItem key={`${i}-${level}`} value={`${test.name} - Level ${level}`}>
-                        {`${test.name} - Level ${level}`}
-                      </MenuItem>
-                    ));
-                  } else {
-                    return (
-                      <MenuItem key={i} value={test.name}>
-                        {test.name}
-                      </MenuItem>
-                    );
-                  }
-                })
+                if (test.level > 1) {
+                  const levels = Array.from({ length: test.level }, (_, j) => j + 1);
+                  return levels.map((level) => (
+                    <MenuItem key={`${i}-${level}`} value={`${test.name} - Level ${level}`}>
+                      {`${test.name} - Level ${level}`}
+                    </MenuItem>
+                  ));
+                } else {
+                  return (
+                    <MenuItem key={i} value={test.name}>
+                      {test.name}
+                    </MenuItem>
+                  );
+                }
+              })
               : promptList.map((prompt, i) => (
-                  <MenuItem key={i} value={prompt.title}>
-                    {prompt.title}
-                  </MenuItem>
-                ))}
+                <MenuItem key={i} value={prompt.title}>
+                  {prompt.title}
+                </MenuItem>
+              ))}
           </Select>
         </StepCard>
       ))}
@@ -153,5 +171,3 @@ export const AddWorkflow = () => {
     </Container>
   );
 };
-
-
