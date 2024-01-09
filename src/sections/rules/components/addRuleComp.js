@@ -33,8 +33,10 @@ export const AddRule = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [conditions, setConditions] = useState([{ question: [], option: null, optionNo: null }]);
   const [initialQuestionsFetched, setInitialQuestionsFetched] = useState(false);
+  const [groupedQuestions, setGroupedQuestions] = useState([]);
 
-  const filteredQuestions = questions.filter((question) => question.type === 0);
+
+  const filteredQuestions = questions.filter((question) => question.type == 0);
 
 
   useEffect(() => {
@@ -70,14 +72,53 @@ export const AddRule = () => {
 
   useEffect(() => {
     // Set default values for each condition based on the first elements available
-    if (!initialQuestionsFetched && filteredQuestions.length > 0) {
+    if (!initialQuestionsFetched && (filteredQuestions.length > 0 || groupedQuestions.length > 0)) {
+      const defaultQuestion = values.type == 0 ? [filteredQuestions[0]] : [groupedQuestions[0]];
+      const defaultOption = defaultQuestion[0].options[0];
       setConditions((prevConditions) => [
-        { question: [filteredQuestions[0]], option: filteredQuestions[0].options[0], optionNo: 0 },
-        { question: [filteredQuestions[0]], option: filteredQuestions[0].options[0], optionNo: 0 },
+        { question: defaultQuestion, option: defaultOption, optionNo: 0 },
+        { question: defaultQuestion, option: defaultOption, optionNo: 0 },
       ]);
       setInitialQuestionsFetched(true);
     }
-  }, [filteredQuestions, initialQuestionsFetched]);
+  }, [filteredQuestions, groupedQuestions, initialQuestionsFetched, values.type]);
+  
+
+  useEffect(() => {
+    if (values.type == 1 && questions.length > 0) {
+      const grouped = [];
+      for (let i = 0; i < questions.length; i += values.groupSize) {
+        grouped.push(questions.slice(i, i + values.groupSize));
+      }
+
+      // Find the common minimum number of options across grouped questions
+      const commonOptions = grouped.map((group) =>
+        Math.min(...group.map((question) => question.options.length))
+      );
+
+      // Update the groupedQuestions state
+      setGroupedQuestions(grouped.map((group, index) => ({
+        questions: group,
+        commonOptions: commonOptions[index],
+      })));
+
+      // Set default conditions for grouped questions
+      setConditions(grouped.map((group, index) => ({
+        question: group.map((q) => q.id),
+        option: null, // Set to the first common option by default
+        optionNo: 0,
+      })));
+    } else {
+      const defaultQuestion = values.type == 0 ? [filteredQuestions[0]] : [groupedQuestions[0]];
+      const defaultOption = defaultQuestion[0]?.options[0];
+      setConditions((prevConditions) => [
+        { question: defaultQuestion, option: defaultOption, optionNo: 0 },
+        { question: defaultQuestion, option: defaultOption, optionNo: 0 },
+      ]);
+      setInitialQuestionsFetched(true);
+    }
+  }, [questions, values.type, values.groupSize]);
+
 
   const addCondition = () => {
     setConditions((prevConditions) => [
@@ -88,7 +129,7 @@ export const AddRule = () => {
 
   const handleConditionQuestionChange = (event, index) => {
     const selectedQuestionId = event.target.value;
-    const question = filteredQuestions.find((q) => q.id === selectedQuestionId);
+    const question = filteredQuestions.find((q) => q.id == selectedQuestionId);
 
     setConditions((prevConditions) => {
       const updatedConditions = [...prevConditions];
@@ -162,9 +203,9 @@ export const AddRule = () => {
         // const encodedTest = btoa(JSON.stringify(createdTest));
 
         // // Navigate to different routes based on the button clicked
-        // if (event.target.innerText === 'Finish') {
+        // if (event.target.innerText == 'Finish') {
         //   router.push('/');
-        // } else if (event.target.innerText === 'Add Questions') {
+        // } else if (event.target.innerText == 'Add Questions') {
         //   // Pass the encoded test data as a route parameter
         //   router.push('/questions/addQuestion/[testId]', `/questions/addQuestion/${createdTest.id}?testData=${encodeURIComponent(encodedTest)}`);
         // }
@@ -283,7 +324,7 @@ export const AddRule = () => {
               sx={{ marginLeft: "20px" }}
             >
               {condition?.question &&
-                condition?.question[0].options.map((option, optionIndex) => (
+                condition?.question[0]?.options.map((option, optionIndex) => (
                   <MenuItem key={optionIndex} value={optionIndex}>
                     {`${optionIndex + 1}. ${option.english.substring(0, 70)}...`}
                   </MenuItem>
