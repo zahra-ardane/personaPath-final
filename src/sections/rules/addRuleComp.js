@@ -266,6 +266,7 @@ export const AddRule = () => {
           required
           rows={4}
           value={values.report.english}
+          sx={{ marginBottom: 2 }} 
         />
         <TextField
           fullWidth
