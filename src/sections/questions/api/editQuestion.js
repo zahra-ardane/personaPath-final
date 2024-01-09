@@ -3,7 +3,7 @@ import axiosInstance from '../../../lib/axiosInstance';
 
 const editQuestion = async (questionId, data) => {
   try {
-    console.log("edit question's data in api call is ", data);
+    // console.log("edit question's data in api call is ", data);
     const response = await axiosInstance.put(`/question/updateQuestionById/${questionId}`, data);
     return response.data;
     // return (

@@ -4,7 +4,7 @@ import axiosInstance from '../../../lib/axiosInstance';
 const postTest = async (testId, data) => {
   try {
 
-    console.log("in post qustion data is", data);
+    // console.log("in post qustion data is", data);
     const response = await axiosInstance.post(`/question/createQuestion/${testId}`, data);
     return response.data;
     // return (

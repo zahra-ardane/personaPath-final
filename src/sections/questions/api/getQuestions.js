@@ -3,7 +3,7 @@ import axiosInstance from '../../../lib/axiosInstance';
 
 const getQuestions = async (testId) => {
   try {
-    console.log("test id in getQuestions ", testId);
+    // console.log("test id in getQuestions ", testId);
     const response = await axiosInstance.get(`/question/getQuestionsByTestId/${testId}`);
     return response.data;
 

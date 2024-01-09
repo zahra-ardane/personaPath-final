@@ -58,6 +58,11 @@ export const TestList = () => {
     router.push(`/test/editTest?data=${encodedTestData}`);
   };
 
+  const handleAddRuleClick = (event, test) => {
+    event.stopPropagation();
+    router.push(`/rules/addRule/${test.id}`);
+  };
+
   const handleTestClick = (test) => {
     const testData = JSON.stringify(test);
     const encodedTestData = btoa(testData);
@@ -142,6 +147,14 @@ export const TestList = () => {
                           })}
                         </TableCell>
                         <TableCell align="right">
+                          <Button
+                            variant="outlined"
+                            color="success"
+                            sx={{ mr: 1 }}
+                            onClick={(event) => handleAddRuleClick(event, test)}
+                          >
+                            Add Rule
+                          </Button>
                           <Button
                             variant="outlined"
                             color="primary"
