@@ -31,7 +31,7 @@ export const AddRule = () => {
   const [test, setTest] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [conditions, setConditions] = useState([{ question: null, option: null, optionNo: null }]);
+  const [conditions, setConditions] = useState([{ question: [], option: null, optionNo: null }]);
   const [initialQuestionsFetched, setInitialQuestionsFetched] = useState(false);
 
   const filteredQuestions = questions.filter((question) => question.type === 0);
@@ -72,8 +72,8 @@ export const AddRule = () => {
     // Set default values for each condition based on the first elements available
     if (!initialQuestionsFetched && filteredQuestions.length > 0) {
       setConditions((prevConditions) => [
-        { question: filteredQuestions[0], option: filteredQuestions[0].options[0], optionNo: 0 },
-        { question: filteredQuestions[0], option: filteredQuestions[0].options[0], optionNo: 0 },
+        { question: [filteredQuestions[0]], option: filteredQuestions[0].options[0], optionNo: 0 },
+        { question: [filteredQuestions[0]], option: filteredQuestions[0].options[0], optionNo: 0 },
       ]);
       setInitialQuestionsFetched(true);
     }
@@ -82,7 +82,7 @@ export const AddRule = () => {
   const addCondition = () => {
     setConditions((prevConditions) => [
       ...prevConditions,
-      { question: filteredQuestions[0], option: filteredQuestions[0].options[0], optionNo: 0 },
+      { question: [filteredQuestions[0]], option: filteredQuestions[0].options[0], optionNo: 0 },
     ]);
   };
 
@@ -93,14 +93,14 @@ export const AddRule = () => {
     setConditions((prevConditions) => {
       const updatedConditions = [...prevConditions];
       updatedConditions[index] = {
-        question,
+        question: [question],
         option: question?.options[0] || null,
         optionNo: question ? 0 : null,
       };
       return updatedConditions;
     });
   };
-
+  
   const handleConditionOptionChange = (event, index) => {
     const selectedOptionIndex = event.target.value;
 
@@ -140,26 +140,27 @@ export const AddRule = () => {
   const handleSubmit = useCallback(
     async (event) => {
       event.preventDefault();
-  
+
       try {
         if (!values.report.english) {
           alert('Please fill in the required fields.');
           return;
         }
-  
+
         const ruleData = {
           items: conditions,
           type: values.type,
           report: values.report,
         };
-  
+
         // Call the API to post the rule
         const createdRule = await postRule(ruleData, test.id);
         console.log("created rule is ", createdRule);
-  
+
+        router.reload();
         // Encode the createdTest object
         // const encodedTest = btoa(JSON.stringify(createdTest));
-  
+
         // // Navigate to different routes based on the button clicked
         // if (event.target.innerText === 'Finish') {
         //   router.push('/');
@@ -261,11 +262,12 @@ export const AddRule = () => {
           </Grid>
         )}
 
+
         {/* Display conditions */}
-        {conditions.map((condition, index) => (
+        {conditions[0]?.question?.length == 1 && conditions.map((condition, index) => (
           <div key={index} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
             <div>
-              <Select value={condition.question?.id || ''} onChange={(e) => handleConditionQuestionChange(e, index)}>
+              <Select value={condition?.question[0]?.id || ''} onChange={(e) => handleConditionQuestionChange(e, index)}>
                 {filteredQuestions.map((question, qIndex) => (
                   <MenuItem key={question.id} value={question.id}>
                     {`${qIndex + 1}. ${question.questionText.english.substring(0, 70)}...`}
@@ -280,8 +282,8 @@ export const AddRule = () => {
               disabled={!condition.question}
               sx={{ marginLeft: "20px" }}
             >
-              {condition.question &&
-                condition.question.options.map((option, optionIndex) => (
+              {condition?.question &&
+                condition?.question[0].options.map((option, optionIndex) => (
                   <MenuItem key={optionIndex} value={optionIndex}>
                     {`${optionIndex + 1}. ${option.english.substring(0, 70)}...`}
                   </MenuItem>
