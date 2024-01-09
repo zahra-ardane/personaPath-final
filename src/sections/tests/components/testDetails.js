@@ -20,7 +20,7 @@ const TestDetails = () => {
   useEffect(() => {
     if (data) {
       // Decode the base64-encoded data
-      const decodedData = atob(data);
+      const decodedData = decodeURIComponent(atob(data));
 
       // Parse the JSON string to get the test object
       const testObject = JSON.parse(decodedData);

@@ -65,7 +65,7 @@ export const TestList = () => {
 
   const handleTestClick = (test) => {
     const testData = JSON.stringify(test);
-    const encodedTestData = btoa(testData);
+    const encodedTestData = btoa(encodeURIComponent(testData));
 
     router.push(`/test/${test.id}?data=${encodedTestData}`);
   };
