@@ -7,8 +7,9 @@ import {
 import { styled } from '@mui/system';
 
 // ** API imports
-import getTestById from '../tests/api/getTestById';
-import getQuestions from '../questions/api/getQuestions';
+import getTestById from '../../tests/api/getTestById';
+import getQuestions from '../../questions/api/getQuestions';
+import postRule from '../api/postRule'
 
 const Container = styled('div')(({ theme }) => ({
   padding: theme.spacing(2),
@@ -135,6 +136,44 @@ export const AddRule = () => {
       }));
     }
   }, []);
+
+  const handleSubmit = useCallback(
+    async (event) => {
+      event.preventDefault();
+  
+      try {
+        if (!values.report.english) {
+          alert('Please fill in the required fields.');
+          return;
+        }
+  
+        const ruleData = {
+          items: conditions,
+          type: values.type,
+          report: values.report,
+        };
+  
+        // Call the API to post the rule
+        const createdRule = await postRule(ruleData, test.id);
+        console.log("created rule is ", createdRule);
+  
+        // Encode the createdTest object
+        // const encodedTest = btoa(JSON.stringify(createdTest));
+  
+        // // Navigate to different routes based on the button clicked
+        // if (event.target.innerText === 'Finish') {
+        //   router.push('/');
+        // } else if (event.target.innerText === 'Add Questions') {
+        //   // Pass the encoded test data as a route parameter
+        //   router.push('/questions/addQuestion/[testId]', `/questions/addQuestion/${createdTest.id}?testData=${encodeURIComponent(encodedTest)}`);
+        // }
+      } catch (error) {
+        console.error('Error submitting the test:', error);
+        // Handle error feedback to the user if needed
+      }
+    },
+    [values, router]
+  );
 
 
   if (!test) {
@@ -266,7 +305,7 @@ export const AddRule = () => {
           required
           rows={4}
           value={values.report.english}
-          sx={{ marginBottom: 2 }} 
+          sx={{ marginBottom: 2 }}
         />
         <TextField
           fullWidth
@@ -274,10 +313,16 @@ export const AddRule = () => {
           name="report-persian"
           onChange={handleChange}
           multiline
-          required
+          // required
           rows={4}
           value={values.report.persian}
         />
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
+            Add Rule
+          </Button>
+        </div>
 
       </Container>
 

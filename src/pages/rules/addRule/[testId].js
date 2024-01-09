@@ -3,7 +3,7 @@ import React from 'react';
 import Head from 'next/head';
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import {AddRule} from '../../../sections/rules/addRuleComp';
+import {AddRule} from '../../../sections/rules/components/addRuleComp';
 
 const AddRulePage = () => (
   <>
