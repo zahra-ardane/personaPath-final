@@ -3,9 +3,6 @@ import axiosInstance from '../../../lib/axiosInstance';
 
 const editPromot = async (promptId, promptData) => {
   try {
-    console.log("promptData is ", promptData);
-    console.log("promptData's text typeof is ", typeof(promptData.text));
-
     const response = await axiosInstance.put(`/prompt/updatePrompt/${promptId}`, promptData);
     return response.data;
     // return (

@@ -118,7 +118,6 @@ export const EditQuestion = () => {
         }));
         
       } else {
-        console.log("name and value in else are ", name, value);
         setValues((prevState) => ({
           ...prevState,
           [name]: value,
@@ -243,7 +242,6 @@ export const EditQuestion = () => {
     [values, test, router]
   );
 
-  console.log("values in editQuesrion are ", values);
 
   return (
     <form

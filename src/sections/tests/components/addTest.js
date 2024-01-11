@@ -54,7 +54,6 @@ export const AddTest = () => {
   
         // Call the API to post the test data
         const createdTest = await postTest(testData);
-        console.log("create test is ", createdTest);
   
         // Encode the createdTest object
         const encodedTest = btoa(JSON.stringify(createdTest));

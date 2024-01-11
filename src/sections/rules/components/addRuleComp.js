@@ -32,8 +32,7 @@ export const AddRule = () => {
   const [test, setTest] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [conditions, setConditions] = useState([{ question: [], option: null, optionNo: null }]);
-  // const [initialQuestionsFetched, setInitialQuestionsFetched] = useState(false);
+  const [conditions, setConditions] = useState([{ question: [], option: '', optionNo: null }]);
   const [groupedQuestions, setGroupedQuestions] = useState([]);
 
 
@@ -74,39 +73,38 @@ export const AddRule = () => {
   useEffect(() => {
     if (values.type == 1 && filteredQuestions.length > 0) {
       const grouped = [];
-      for (let i = 0; i < filteredQuestions.length; i += values.groupSize) {
-        grouped.push(filteredQuestions.slice(i, i + values.groupSize));
+      for (let i = 0; i < filteredQuestions.length; i += parseInt(values.groupSize, 10)) {
+        grouped.push(filteredQuestions.slice(i, i + parseInt(values.groupSize, 10)));
       }
 
       // Find the common minimum number of options across grouped questions
       const commonOptions = grouped.map((group) =>
         Math.min(...group.map((question) => question.options.length))
       );
-
+  
       // Update the groupedQuestions state
       setGroupedQuestions(grouped.map((group, index) => ({
         questions: group,
         commonOptions: commonOptions[index],
       })));
-
+  
       // Set default conditions for grouped questions
       setConditions(grouped.map((group, index) => ({
-        question: group.map((q) => q),
-        option: null, 
+        question: group,
+        option: '',
         optionNo: 0,
       })));
-
+  
     } else {
-      const defaultQuestion = values.type == 0 ? [filteredQuestions[0]] : [groupedQuestions[0]];
+      const defaultQuestion = [filteredQuestions[0]];
       const defaultOption = defaultQuestion[0]?.options[0];
-      setConditions((prevConditions) => [
+      setConditions([
         { question: defaultQuestion, option: defaultOption, optionNo: 0 },
         { question: defaultQuestion, option: defaultOption, optionNo: 0 },
       ]);
-      // setInitialQuestionsFetched(true);
     }
   }, [questions, values.type, values.groupSize, values.levelQuestions]);
-
+  
 
   const addCondition = () => {
     setConditions((prevConditions) => [
@@ -123,7 +121,7 @@ export const AddRule = () => {
       const updatedConditions = [...prevConditions];
       updatedConditions[index] = {
         question: [question],
-        option: question?.options[0] || null,
+        option: question?.options[0] || '',
         optionNo: question ? 0 : null,
       };
       return updatedConditions;

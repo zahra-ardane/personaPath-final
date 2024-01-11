@@ -49,9 +49,6 @@ export const AddQuestions = () => {
   // Parse the JSON string to get the test object
   const test = JSON.parse(decodedData);
   // Parse the test data from the query parameter
-
-  console.log("valeus in AddQuestions:", values);
-
   
 
   const handleChange = useCallback(
@@ -200,8 +197,6 @@ export const AddQuestions = () => {
 
         // Call the API to post the question data
         const apiResponse = await postQuestion(test.id, questionData);
-        console.log("response data ", apiResponse);
-        console.log("event.target is ", event.target.innerText);
 
         // Navigate based on the button clicked
         if (event.target.innerText === 'Finish') {
@@ -211,7 +206,6 @@ export const AddQuestions = () => {
       
           router.push(`/test/${test.id}?data=${encodedTestData}`);
         } else if (event.target.innerText === 'Save & Add Another') {
-          console.log("n save");
           // Reload the current page to add another question
           router.reload();
         }

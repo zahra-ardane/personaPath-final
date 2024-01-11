@@ -48,7 +48,6 @@ const QuestionList = ({ questions, test }) => {
     try {
       await deleteQuestion(selectedQuestion.id); 
 
-      console.log("after delete is done test is", test);
       router.reload()
 
     } catch (error) {
