@@ -3,7 +3,7 @@ import axiosInstance from '../../../lib/axiosInstance';
 
 const postRule = async (ruleData, testId) => {
   try {
-    // console.log("data being sent in createRule is ", ruleData);
+    console.log("data being sent in createRule is ", ruleData);
     const response = await axiosInstance.post(`/rules/createRules/${testId}`, ruleData);
     return response.data;
     // return (

@@ -32,7 +32,8 @@ export const AddRule = () => {
   const [test, setTest] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [conditions, setConditions] = useState([{ question: [], option: '', optionNo: null }]);
+  const [conditions, setConditions] = useState([{ question: [], option: {english: '', persian: ''}, optionNo: null }]);
+
   const [groupedQuestions, setGroupedQuestions] = useState([]);
 
 
@@ -91,7 +92,7 @@ export const AddRule = () => {
       // Set default conditions for grouped questions
       setConditions(grouped.map((group, index) => ({
         question: group,
-        option: '',
+        option: { english: '', persian: '' },
         optionNo: 0,
       })));
   
@@ -121,7 +122,7 @@ export const AddRule = () => {
       const updatedConditions = [...prevConditions];
       updatedConditions[index] = {
         question: [question],
-        option: question?.options[0] || '',
+        option: question?.options[0] || { english: '', persian: '' },
         optionNo: question ? 0 : null,
       };
       return updatedConditions;
@@ -136,7 +137,11 @@ export const AddRule = () => {
       const currentCondition = updatedConditions[index];
 
       if (currentCondition.question) {
-        currentCondition.option = currentCondition.question[0].options[selectedOptionIndex];
+        if(values.type == 1) {
+          currentCondition.option = { english: '', persian: '' };
+        } else {
+          currentCondition.option = currentCondition.question[0].options[selectedOptionIndex];
+        }
         currentCondition.optionNo = selectedOptionIndex;
       }
 
@@ -213,7 +218,7 @@ export const AddRule = () => {
     );
   }
 
-  console.log("conditions is", conditions);
+  // console.log("conditions is", conditions);
   // console.log("values is", values);
 
 
