@@ -47,7 +47,7 @@ export const AddQuestions = () => {
   const decodedData = atob(testData);
 
   // Parse the JSON string to get the test object
-  const test = JSON.parse(decodedData);
+  const test = JSON.parse(decodeURIComponent(decodedData));
   // Parse the test data from the query parameter
   
 

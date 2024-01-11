@@ -324,9 +324,9 @@ export const AddRule = () => {
                         ))}
                       </Select>
                     ) : (
-                      <Select value={condition?.question.map((q) => q.id).join(',') || ''}>
-                        <MenuItem value={condition?.question.map((q) => q.id).join(',')}>
-                          {`Questions ${condition?.question.map((q, qIndex) => index * values.groupSize + qIndex + 1).join(', ')}`}
+                      <Select value={condition?.question?.map((q) => q?.id).join(',') || ''}>
+                        <MenuItem value={condition?.question?.map((q) => q?.id).join(',')}>
+                          {`Questions ${condition?.question?.map((q, qIndex) => index * values.groupSize + qIndex + 1).join(', ')}`}
                         </MenuItem>
                       </Select>
                     )}
@@ -348,7 +348,7 @@ export const AddRule = () => {
                     ) : (
                       (() => {
                         // Calculate the common minimum number of options across all questions in the condition
-                        const commonOptionCount = Math.min(...condition.question.map(q => q.options.length));
+                        const commonOptionCount = Math.min(...condition?.question?.map(q => q?.options.length));
                         // Generate menu items for the common options
                         return Array.from({ length: commonOptionCount }, (_, optionIndex) => (
                           <MenuItem key={optionIndex} value={optionIndex}>
