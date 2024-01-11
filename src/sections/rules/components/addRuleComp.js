@@ -27,16 +27,17 @@ export const AddRule = () => {
     },
     type: 0,
     groupSize: 3,
+    levelQuestions: 1,
   });
   const [test, setTest] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [conditions, setConditions] = useState([{ question: [], option: null, optionNo: null }]);
-  const [initialQuestionsFetched, setInitialQuestionsFetched] = useState(false);
+  // const [initialQuestionsFetched, setInitialQuestionsFetched] = useState(false);
   const [groupedQuestions, setGroupedQuestions] = useState([]);
 
-
-  const filteredQuestions = questions.filter((question) => question.type == 0);
+  
+  const filteredQuestions = questions.filter((question) => question.type == 0 && question.level == values.levelQuestions);
 
 
   useEffect(() => {
@@ -71,24 +72,10 @@ export const AddRule = () => {
 
 
   useEffect(() => {
-    // Set default values for each condition based on the first elements available
-    if (!initialQuestionsFetched && (filteredQuestions.length > 0 || groupedQuestions.length > 0)) {
-      const defaultQuestion = values.type == 0 ? [filteredQuestions[0]] : [groupedQuestions[0]];
-      const defaultOption = defaultQuestion[0].options[0];
-      setConditions((prevConditions) => [
-        { question: defaultQuestion, option: defaultOption, optionNo: 0 },
-        { question: defaultQuestion, option: defaultOption, optionNo: 0 },
-      ]);
-      setInitialQuestionsFetched(true);
-    }
-  }, [filteredQuestions, groupedQuestions, initialQuestionsFetched, values.type]);
-  
-
-  useEffect(() => {
-    if (values.type == 1 && questions.length > 0) {
+    if (values.type == 1 && filteredQuestions.length > 0) {
       const grouped = [];
-      for (let i = 0; i < questions.length; i += values.groupSize) {
-        grouped.push(questions.slice(i, i + values.groupSize));
+      for (let i = 0; i < filteredQuestions.length; i += values.groupSize) {
+        grouped.push(filteredQuestions.slice(i, i + values.groupSize));
       }
 
       // Find the common minimum number of options across grouped questions
@@ -104,10 +91,11 @@ export const AddRule = () => {
 
       // Set default conditions for grouped questions
       setConditions(grouped.map((group, index) => ({
-        question: group.map((q) => q.id),
+        question: group.map((q) => q),
         option: null, // Set to the first common option by default
         optionNo: 0,
       })));
+
     } else {
       const defaultQuestion = values.type == 0 ? [filteredQuestions[0]] : [groupedQuestions[0]];
       const defaultOption = defaultQuestion[0]?.options[0];
@@ -115,9 +103,9 @@ export const AddRule = () => {
         { question: defaultQuestion, option: defaultOption, optionNo: 0 },
         { question: defaultQuestion, option: defaultOption, optionNo: 0 },
       ]);
-      setInitialQuestionsFetched(true);
+      // setInitialQuestionsFetched(true);
     }
-  }, [questions, values.type, values.groupSize]);
+  }, [questions, values.type, values.groupSize, values.levelQuestions]);
 
 
   const addCondition = () => {
@@ -141,7 +129,7 @@ export const AddRule = () => {
       return updatedConditions;
     });
   };
-  
+
   const handleConditionOptionChange = (event, index) => {
     const selectedOptionIndex = event.target.value;
 
@@ -150,7 +138,7 @@ export const AddRule = () => {
       const currentCondition = updatedConditions[index];
 
       if (currentCondition.question) {
-        currentCondition.option = currentCondition.question.options[selectedOptionIndex];
+        currentCondition.option = currentCondition.question[0].options[selectedOptionIndex];
         currentCondition.optionNo = selectedOptionIndex;
       }
 
@@ -192,6 +180,7 @@ export const AddRule = () => {
           items: conditions,
           type: values.type,
           report: values.report,
+          levelQuestions: values.levelQuestions
         };
 
         // Call the API to post the rule
@@ -227,7 +216,7 @@ export const AddRule = () => {
   }
 
   console.log("conditions is", conditions);
-  console.log("values is", values);
+  // console.log("values is", values);
 
 
   return (
@@ -268,6 +257,28 @@ export const AddRule = () => {
                     label="Grouped Questions"
                   />
                 </RadioGroup>
+              </Grid>
+              <Grid xs={12} md={6}>
+                <TextField
+                  fullWidth
+                  label="Test Level"
+                  name="levelQuestions"
+                  onChange={handleChange}
+                  // required
+                  select
+                  SelectProps={{ native: true }}
+                  value={values.levelQuestions}
+                >
+                  {/* Dynamically generate options based on test levels */}
+                  {Array.from({ length: test.level }).map((_, index) => {
+                    const levelValue = test.level - index;
+                    return (
+                      <option key={levelValue} value={levelValue}>
+                        {`Level ${levelValue}`}
+                      </option>
+                    );
+                  })}
+                </TextField>
               </Grid>
               {values.type == 1 && (
                 <Grid item xs={12} md={6}>
