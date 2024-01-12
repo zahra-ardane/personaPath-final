@@ -45,10 +45,10 @@ export const AddRule = () => {
       try {
         const test = await getTestById(testId);
         setTest(test);
-  
+
         const questions = await getQuestions(testId);
         setQuestions(questions);
-        
+
         // Both test and questions have been loaded, set isLoading to false
         setIsLoading(false);
       } catch (error) {
@@ -56,10 +56,10 @@ export const AddRule = () => {
         setIsLoading(false); // Handle error and set isLoading to false
       }
     };
-  
+
     fetchData();
   }, [testId]);
-  
+
 
 
   useEffect(() => {
@@ -313,8 +313,8 @@ export const AddRule = () => {
 
               {/* Display conditions */}
               {conditions.map((condition, index) => (
-                <div key={index} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-                  <div>
+                <Grid container spacing={2} alignItems="center" key={index}>
+                  <Grid item xs={6}>
                     {values.type == 0 ? (
                       <Select value={condition?.question[0]?.id || ''} onChange={(e) => handleConditionQuestionChange(e, index)}>
                         {filteredQuestions.map((question, qIndex) => (
@@ -330,35 +330,37 @@ export const AddRule = () => {
                         </MenuItem>
                       </Select>
                     )}
-                  </div>
+                  </Grid>
 
-                  <Select
-                    value={condition.optionNo != null ? condition.optionNo : 0}
-                    onChange={(e) => handleConditionOptionChange(e, index)}
-                    disabled={!condition.question}
-                    sx={{ marginLeft: "20px" }}
-                  >
-                    {values.type == 0 ? (
-                      condition?.question &&
-                      condition?.question[0]?.options.map((option, optionIndex) => (
-                        <MenuItem key={optionIndex} value={optionIndex}>
-                          {`${optionIndex + 1}. ${option.english.substring(0, 70)}...`}
-                        </MenuItem>
-                      ))
-                    ) : (
-                      (() => {
-                        // Calculate the common minimum number of options across all questions in the condition
-                        const commonOptionCount = Math.min(...condition?.question?.map(q => q?.options.length));
-                        // Generate menu items for the common options
-                        return Array.from({ length: commonOptionCount }, (_, optionIndex) => (
+                  <Grid item xs={6}>
+                    <Select
+                      value={condition.optionNo != null ? condition.optionNo : 0}
+                      onChange={(e) => handleConditionOptionChange(e, index)}
+                      disabled={!condition.question}
+                      sx={{ marginLeft: "20px" }}
+                    >
+                      {values.type == 0 ? (
+                        condition?.question &&
+                        condition?.question[0]?.options.map((option, optionIndex) => (
                           <MenuItem key={optionIndex} value={optionIndex}>
-                            {`Option ${optionIndex + 1}`}
+                            {`${optionIndex + 1}. ${option.english.substring(0, 70)}...`}
                           </MenuItem>
-                        ));
-                      })()
-                    )}
-                  </Select>
-                </div>
+                        ))
+                      ) : (
+                        (() => {
+                          // Calculate the common minimum number of options across all questions in the condition
+                          const commonOptionCount = Math.min(...condition?.question?.map(q => q?.options.length));
+                          // Generate menu items for the common options
+                          return Array.from({ length: commonOptionCount }, (_, optionIndex) => (
+                            <MenuItem key={optionIndex} value={optionIndex}>
+                              {`Option ${optionIndex + 1}`}
+                            </MenuItem>
+                          ));
+                        })()
+                      )}
+                    </Select>
+                  </Grid>
+                </Grid>
               ))}
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
