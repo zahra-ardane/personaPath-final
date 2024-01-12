@@ -316,17 +316,30 @@ export const AddRule = () => {
                 <Grid container spacing={2} alignItems="center" key={index}>
                   <Grid item xs={6}>
                     {values.type == 0 ? (
-                      <Select value={condition?.question[0]?.id || ''} onChange={(e) => handleConditionQuestionChange(e, index)}>
+                      <Select
+                        value={condition?.question[0]?.id || ''}
+                        onChange={(e) => handleConditionQuestionChange(e, index)}
+                        sx={{ width: '100%' }}
+                        MenuProps={{ PaperProps: { style: { maxWidth: '50ch' } } }}
+                      >
                         {filteredQuestions.map((question, qIndex) => (
                           <MenuItem key={question.id} value={question.id}>
-                            {`${qIndex + 1}. ${question.questionText.english.substring(0, 70)}...`}
+                            <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {`${qIndex + 1}. ${question.questionText.english}`}
+                            </div>
                           </MenuItem>
                         ))}
                       </Select>
+
                     ) : (
-                      <Select value={condition?.question?.map((q) => q?.id).join(',') || ''}>
+                      <Select
+                        value={condition?.question?.map((q) => q?.id).join(',') || ''}
+                        sx={{ width: '100%' }}
+                      >
                         <MenuItem value={condition?.question?.map((q) => q?.id).join(',')}>
-                          {`Questions ${condition?.question?.map((q, qIndex) => index * values.groupSize + qIndex + 1).join(', ')}`}
+                          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {`Questions ${condition?.question?.map((q, qIndex) => index * values.groupSize + qIndex + 1).join(', ')}`}
+                          </div>
                         </MenuItem>
                       </Select>
                     )}
@@ -337,13 +350,16 @@ export const AddRule = () => {
                       value={condition.optionNo != null ? condition.optionNo : 0}
                       onChange={(e) => handleConditionOptionChange(e, index)}
                       disabled={!condition.question}
-                      sx={{ marginLeft: "20px" }}
+                      sx={{ width: '100%' }}
+                      MenuProps={{ PaperProps: { style: { maxWidth: '50ch' } } }}
                     >
                       {values.type == 0 ? (
                         condition?.question &&
                         condition?.question[0]?.options.map((option, optionIndex) => (
                           <MenuItem key={optionIndex} value={optionIndex}>
-                            {`${optionIndex + 1}. ${option.english.substring(0, 70)}...`}
+                            <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {`${optionIndex + 1}. ${option.english}`}
+                            </div>
                           </MenuItem>
                         ))
                       ) : (
@@ -353,7 +369,9 @@ export const AddRule = () => {
                           // Generate menu items for the common options
                           return Array.from({ length: commonOptionCount }, (_, optionIndex) => (
                             <MenuItem key={optionIndex} value={optionIndex}>
-                              {`Option ${optionIndex + 1}`}
+                              <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {`Option ${optionIndex + 1}`}
+                              </div>
                             </MenuItem>
                           ));
                         })()
@@ -363,7 +381,8 @@ export const AddRule = () => {
                 </Grid>
               ))}
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16, marginTop: 16 }}>
                 <Button variant="contained" color="primary" onClick={addCondition}>
                   Add Condition
                 </Button>
