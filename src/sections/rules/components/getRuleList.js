@@ -1,7 +1,7 @@
 // components/RuleList.js
 import React, { useState, useEffect } from 'react';
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import DeleteRuleDialog from './DeleteRuleDialog';
+import DeleteRuleDialog from './deleteRuleDialog';
 import deleteRule from '../api/deleteRule'
 import getRuleList from '../api/getRuleList'
 import { useRouter } from 'next/router';
@@ -84,15 +84,9 @@ const RuleList = () => {
   };
 
   const handleElementClick = (rule) => {
+    const encodedData = btoa(encodeURIComponent(JSON.stringify(rule)));
 
-    const tempData = {
-      rule,
-      test
-    }
-
-    const encodedData = btoa(encodeURIComponent(JSON.stringify(tempData)));
-
-    router.push(`/rules/details?data=${encodedData}`);
+    router.push(`/rules/details/${testId}?data=${encodedData}`);
   };
 
 

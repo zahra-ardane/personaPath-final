@@ -103,6 +103,8 @@ export const AddWorkflow = () => {
     }));
   }, []);
 
+  console.log("steps are ", steps);
+
 
   return (
     <Container>

@@ -21,7 +21,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import getTestList from '../api/getTestList';
 import deleteTest from '../api/deleteTest';
-import DeleteTestDialog from './DeleteTestDialog';
+import DeleteTestDialog from './deleteTestDialog';
 
 export const TestList = () => {
   const router = useRouter();
