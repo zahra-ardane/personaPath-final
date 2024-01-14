@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import NextLink from 'next/link';
-import DeleteQuestionDialog from './DeleteQuestionDialog'; 
+import DeleteQuestionDialog from './DeleteQuestionDialog';
 import deleteQuestion from '../api/deleteQuestion'
 import { useRouter } from 'next/router';
 
@@ -46,7 +46,7 @@ const QuestionList = ({ questions, test }) => {
   const handleDeleteConfirm = async () => {
 
     try {
-      await deleteQuestion(selectedQuestion.id); 
+      await deleteQuestion(selectedQuestion.id);
 
       router.reload()
 
@@ -83,15 +83,17 @@ const QuestionList = ({ questions, test }) => {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell sx={{ width: '5%' }}>Index</TableCell>
               <TableCell>Question</TableCell>
-              <TableCell align="right">Level</TableCell>
-              <TableCell align="right">Type</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell align="right" sx={{ width: '5%' }}>Level</TableCell>
+              <TableCell align="right" sx={{ width: '15%' }}>Type</TableCell>
+              <TableCell align="right" sx={{ width: '20%' }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {questions.map((question) => (
+            {questions.map((question, index) => (
               <TableRow key={question.id} onClick={() => handleQuestionClick(question)}>
+                <TableCell sx={{ width: '5%' }}>{index + 1}</TableCell>
                 <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                   {question?.questionText?.english}
                 </TableCell>

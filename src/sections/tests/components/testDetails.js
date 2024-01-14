@@ -1,8 +1,7 @@
 // sections/tests/components/TestDetailsMain.js
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Typography, Box, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Button, Link } from '@mui/material';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
+import { Typography, Button, Link } from '@mui/material';
 import getQuestions from '../../questions/api/getQuestions';
 import QuestionList from '../../questions/components/questionList';
 import NextLink from 'next/link';
@@ -67,39 +66,16 @@ const TestDetails = () => {
       <Typography variant="body1" sx={{ color: '#777', my: 2 }}>
         {test.about}
       </Typography>
-  
-      {/* <TableContainer component={Paper} sx={{ mt: 5 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Question</TableCell>
-              <TableCell align="right">Level</TableCell>
-              <TableCell align="right">Type</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {questions.map((question) => (
-              <TableRow key={question.id}>
-                <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                  {question.englishText}
-                </TableCell>
-                <TableCell align="right">{question.level}</TableCell>
-                <TableCell align="right">{question.type}</TableCell>
-                <TableCell align="right">
-                  <Button variant="outlined" color="primary" sx={{ mr: 1 }}>
-                    Edit
-                  </Button>
-                  <Button variant="outlined" color="error">
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer> */}
 
+      {/* Ruels section */}
+      {/* testData is temporary, later ill call the needed api in getRuleList itself */}
+      <NextLink href={`/rules/ruleList/${test.id}`} passHref>
+        <Link underline="none">
+            Rules
+        </Link>
+      </NextLink>
+  
+      {/* Quesiton List */}
       <QuestionList questions={questions} test={test}/>
 
       {/* encoded data is sent */}
