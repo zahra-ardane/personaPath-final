@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, MenuItem, Select, Typography, TextField } from '@mui/material';
+import { Button, MenuItem, Select, Typography, TextField, IconButton } from '@mui/material';
 import { styled } from '@mui/system';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 // ** API imports
 import getTestList from '../tests/api/getTestList';
@@ -19,6 +20,7 @@ const StepCard = styled('div')(({ theme, type }) => ({
   marginBottom: theme.spacing(2),
   display: 'flex',
   alignItems: 'center',
+  position: 'relative', // Added for positioning the delete button
 }));
 
 const StepIcon = styled('div')(({ theme }) => ({
@@ -34,8 +36,8 @@ const StepIcon = styled('div')(({ theme }) => ({
 export const AddWorkflow = () => {
   const [values, setValues] = useState({
     name: ''
-});
-  const [steps, setSteps] = useState([{ type: 'test', data: '' }, { type: 'prompt', data: '' }]);
+  });
+  const [steps, setSteps] = useState([{ type: 'test', data: '' }, { type: 'prompt', data: '', ifCondition: 'yes', jumpTo: '' }]);
   const [testList, setTestList] = useState([]);
   const [promptList, setPromptList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -73,17 +75,24 @@ export const AddWorkflow = () => {
       return [
         ...prevSteps.slice(0, -1),
         { type: 'test', data: '' },
-        { type: 'prompt', data: lastPromptValue }, // Retain the last prompt value
+        { type: 'prompt', data: lastPromptValue },
       ];
     });
   };
 
   const handleStepTypeChange = (event, index) => {
     const updatedSteps = [...steps];
-    updatedSteps[index].type = event.target.value;
+    const newType = event.target.value;
 
-    // Clear the data when changing the type
+    updatedSteps[index].type = newType;
+
     updatedSteps[index].data = '';
+
+    // Add default values for ifCondition and jumpTo when changing to 'prompt'
+    if (newType === 'prompt') {
+      updatedSteps[index].ifCondition = 'yes';
+      updatedSteps[index].jumpTo = '';
+    }
 
     setSteps(updatedSteps);
   };
@@ -91,6 +100,18 @@ export const AddWorkflow = () => {
   const handleDataChange = (event, index) => {
     const updatedSteps = [...steps];
     updatedSteps[index].data = event.target.value;
+    setSteps(updatedSteps);
+  };
+
+  const handleIfConditionChange = (event, index) => {
+    const updatedSteps = [...steps];
+    updatedSteps[index].ifCondition = event.target.value;
+    setSteps(updatedSteps);
+  };
+
+  const handleJumpToChange = (event, index) => {
+    const updatedSteps = [...steps];
+    updatedSteps[index].jumpTo = event.target.value;
     setSteps(updatedSteps);
   };
 
@@ -103,6 +124,13 @@ export const AddWorkflow = () => {
     }));
   }, []);
 
+  const handleDeleteStep = (index) => {
+    setSteps((prevSteps) => {
+      // Remove the step at the given index
+      return [...prevSteps.slice(0, index), ...prevSteps.slice(index + 1)];
+    });
+  };
+
   console.log("steps are ", steps);
 
 
@@ -113,11 +141,13 @@ export const AddWorkflow = () => {
         label="Workflow Name"
         name="name"
         onChange={handleChange}
-        required 
+        required
         value={values.name}
       />
       {steps.map((step, index) => (
         <StepCard key={index} style={{ background: step.type === 'test' ? '#e4e9ed' : '#d9cfe6' }}>
+
+          {/* Icon */}
           <StepIcon>
             {step.type === 'test' ? (
               <img src="/assets/test.png" alt="Test Icon" style={{ width: '100%', height: '100%' }} />
@@ -126,6 +156,8 @@ export const AddWorkflow = () => {
             )}
           </StepIcon>
           <Typography variant="h6" sx={{ color: '#07010f', marginRight: '10px' }}>{`${index + 1}.`}</Typography>
+
+          {/* Prompt / Test */}
           <Select
             value={step.type}
             onChange={(e) => handleStepTypeChange(e, index)}
@@ -137,6 +169,8 @@ export const AddWorkflow = () => {
               Prompt
             </MenuItem>
           </Select>
+
+          {/* prompt/test options */}
           <Select
             value={step.data}
             onChange={(e) => handleDataChange(e, index)}
@@ -165,11 +199,57 @@ export const AddWorkflow = () => {
                 </MenuItem>
               ))}
           </Select>
+          {step.type === 'prompt' && index !== steps.length - 1 && (
+            <>
+              <Typography sx={{ color: '#07010f', marginRight: '10px', marginLeft: '30px' }}>if</Typography>
+              <Select
+                value={step.ifCondition}
+                onChange={(e) => handleIfConditionChange(e, index)}
+                style={{ margin: '0 10px' }}
+              >
+                <MenuItem value="yes">Yes</MenuItem>
+                <MenuItem value="no">No</MenuItem>
+              </Select>
+              <Select
+                value={step.jumpTo}
+                onChange={(e) => handleJumpToChange(e, index)}
+                style={{ margin: '0 10px' }}
+              >
+                {steps.slice(index + 1).map((jumpToStep, jIndex) => (
+                  <MenuItem key={jIndex} value={jIndex + index + 2}>{`Step ${jIndex + index + 2}`}</MenuItem>
+                ))}
+              </Select>
+            </>
+          )}
+
+          {index !== 0 && index !== steps.length - 1 && ( // Only show delete button for intermediate steps
+            <IconButton
+              edge="end"
+              aria-label="delete"
+              onClick={() => handleDeleteStep(index)}
+              style={{
+                position: 'absolute',
+                top: '50%',
+                right: '40px',
+                transform: 'translateY(-50%)', // Center vertically
+                padding: '4px', // Adjust padding as needed
+                background: 'rgba(255, 255, 255, 0.8)', // Add a background for better visibility
+                borderRadius: '50%', // Make it circular
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          )}
+
+
         </StepCard>
-      ))}
+      ))
+      }
       <Button variant="contained" onClick={handleAddStep}>
         New Step
       </Button>
-    </Container>
+    </Container >
   );
 };
+
+

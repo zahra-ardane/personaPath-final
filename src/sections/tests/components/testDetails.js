@@ -1,7 +1,7 @@
 // sections/tests/components/TestDetailsMain.js
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Typography, Button, Link } from '@mui/material';
+import { Typography, Button, Link, Card, CardContent } from '@mui/material';
 import getQuestions from '../../questions/api/getQuestions';
 import QuestionList from '../../questions/components/questionList';
 import NextLink from 'next/link';
@@ -14,7 +14,6 @@ const TestDetails = () => {
   const [test, setTest] = useState(null);
   // State to hold questions
   const [questions, setQuestions] = useState([]);
-  
 
   useEffect(() => {
     if (data) {
@@ -51,8 +50,6 @@ const TestDetails = () => {
     );
   }
 
-
-
   return (
     <>
       {/* Set the title dynamically to the test's name */}
@@ -62,23 +59,27 @@ const TestDetails = () => {
           - {test.level} levels
         </Typography>
       </Typography>
-  
+
       <Typography variant="body1" sx={{ color: '#777', my: 2 }}>
         {test.about}
       </Typography>
 
-      {/* Ruels section */}
-      {/* testData is temporary, later ill call the needed api in getRuleList itself */}
-      <NextLink href={`/rules/ruleList/${test.id}`} passHref>
-        <Link underline="none">
-            Rules
-        </Link>
-      </NextLink>
-  
-      {/* Quesiton List */}
-      <QuestionList questions={questions} test={test}/>
+      <Card sx={{ mb: 2, backgroundColor: '#e4e9ed' }}>
+        <CardContent>
+          <Link href={`/rules/ruleList/${test.id}`} sx={{ textDecoration: 'none' }}>
+            <Typography variant="h6" sx={{ color: '#333', fontWeight: 'bold' }}>
+              Rules
+            </Typography>
+          </Link>
+        </CardContent>
+      </Card>
 
-      {/* encoded data is sent */}
+
+
+      {/* Question List */}
+      <QuestionList questions={questions} test={test} />
+
+      {/* Encoded data is sent */}
       <NextLink href={`/questions/addQuestion/${test.name}?testData=${encodeURIComponent(data)}`} passHref>
         <Link underline="none">
           <Button
@@ -90,7 +91,6 @@ const TestDetails = () => {
           </Button>
         </Link>
       </NextLink>
-
     </>
   );
 };

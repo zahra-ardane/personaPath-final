@@ -1,6 +1,6 @@
 // components/RuleList.js
 import React, { useState, useEffect } from 'react';
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, CircularProgress, Box } from '@mui/material';
 import DeleteRuleDialog from './deleteRuleDialog';
 import deleteRule from '../api/deleteRule'
 import getRuleList from '../api/getRuleList'
@@ -32,7 +32,6 @@ const RuleList = () => {
     fetchData();
   }, [testId]);
 
-  console.log("rules are ", rules);
 
   const getRuleTypeString = (type) => {
     switch (type) {
@@ -93,60 +92,86 @@ const RuleList = () => {
 
   return (
     <>
-      <TableContainer component={Paper} sx={{ mt: 5 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ width: '5%' }}>Index</TableCell>
-              <TableCell>Rule</TableCell>
-              <TableCell align="right"  sx={{ width: '5%' }}>Level</TableCell>
-              <TableCell align="right"  sx={{ width: '10%' }}>Type</TableCell>
-              <TableCell align="right"  sx={{ width: '20%' }}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rules?.map((rule, index) => (
-              <TableRow key={rule.id} onClick={() => handleElementClick(rule)}>
-                <TableCell sx={{ width: '5%' }}>{index + 1}</TableCell>
-                <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                  {rule?.report?.english}
-                </TableCell>
-                <TableCell align="right">{rule.levelQuestions}</TableCell>
-                <TableCell align="right">{getRuleTypeString(rule.type)}</TableCell>
-                <TableCell align="right">
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    sx={{ mr: 1 }}
-                    onClick={(event) => handleEditClick(event, rule, test)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={(event) => handleDeleteClick(event, rule, test)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {
+        !isLoading ?
+          <>
+
+            {/* Set the title dynamically to the test's name */}
+            <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: '#333', display: 'flex', alignItems: 'center' }}>
+              Rules
+            </Typography>
 
 
 
-      {/* Delete Confirmation Dialog */}
-      {selectedElement && (
-        <DeleteRuleDialog
-          isOpen={isDeleteDialogOpen}
-          onConfirm={handleDeleteConfirm}
-          onCancel={handleDeleteCancel}
-        // questionName={selectedElement?.questionText?.english}
-        />
-      )}
+            <TableContainer component={Paper} sx={{ mt: 5 }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ width: '5%' }}>Index</TableCell>
+                    <TableCell>Rule</TableCell>
+                    <TableCell align="right" sx={{ width: '5%' }}>Level</TableCell>
+                    <TableCell align="right" sx={{ width: '10%' }}>Type</TableCell>
+                    <TableCell align="right" sx={{ width: '20%' }}>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rules?.map((rule, index) => (
+                    <TableRow key={rule.id} onClick={() => handleElementClick(rule)}>
+                      <TableCell sx={{ width: '5%' }}>{index + 1}</TableCell>
+                      <TableCell sx={{ maxWidth: '200px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                        {rule?.report?.english}
+                      </TableCell>
+                      <TableCell align="right">{rule.levelQuestions}</TableCell>
+                      <TableCell align="right">{getRuleTypeString(rule.type)}</TableCell>
+                      <TableCell align="right">
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          sx={{ mr: 1 }}
+                          onClick={(event) => handleEditClick(event, rule, test)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          onClick={(event) => handleDeleteClick(event, rule, test)}
+                        >
+                          Delete
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {/* Delete Confirmation Dialog */}
+            {selectedElement && (
+              <DeleteRuleDialog
+                isOpen={isDeleteDialogOpen}
+                onConfirm={handleDeleteConfirm}
+                onCancel={handleDeleteCancel}
+              // questionName={selectedElement?.questionText?.english}
+              />
+            )}
+          </>
+
+          : (
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              height="100%"
+            >
+              <Typography variant="h5" gutterBottom>
+                Loading
+              </Typography>
+              <CircularProgress />
+            </Box>
+          )
+      }
+
     </>
   );
 
