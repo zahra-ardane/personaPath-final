@@ -37,7 +37,7 @@ export const AddWorkflow = () => {
   const [values, setValues] = useState({
     name: ''
   });
-  const [steps, setSteps] = useState([{ type: 'test', data: { id: '', name: '', level: 0 } }, { type: 'prompt', data: { id: '', title: '' }, ifYes: '', ifNo: '' }]);
+  const [steps, setSteps] = useState([{ type: 'test', data: { id: '', name: '' }, level: 0 }, { type: 'prompt', data: { id: '', title: '' }, ifYes: '', ifNo: '' }]);
   const [testList, setTestList] = useState([]);
   const [promptList, setPromptList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -98,7 +98,7 @@ export const AddWorkflow = () => {
       const lastPromptId = prevSteps[prevSteps.length - 1].id;
       return [
         ...prevSteps.slice(0, -1),
-        { type: 'test', data: { id: '', name: '', level: 0 } },
+        { type: 'test', data: { id: '', name: '' }, level: 0 },
         { type: 'prompt', data: lastPromptValue },
       ];
     });
@@ -131,37 +131,25 @@ export const AddWorkflow = () => {
 
     const updatedSteps = [...steps];
     const currentStep = updatedSteps[index];
-  
+
     if (currentStep.type === 'test') {
       const selectedTest = testList.find((test) => test.id === selectedValue);
-      currentStep.data = { id: selectedTest.id, name: selectedTest.name, level: selectedTest.level };
-      currentStep.id = selectedTest.id;
-      currentStep.level = selectedTest.level;
+      currentStep.data = { id: selectedTest.id, name: selectedTest.name }; //, level: selectedTest.level
     } else if (currentStep.type === 'prompt') {
       const selectedPrompt = promptList.find((prompt) => prompt.id === selectedValue);
       currentStep.data = { id: selectedPrompt.id, title: selectedPrompt.title };
-      currentStep.id = selectedPrompt.id;
     }
-  
+
     setSteps(updatedSteps);
   };
-  
-
-  // const handleIfConditionChange = (event, index) => {
-  //   const updatedSteps = [...steps];
-  //   updatedSteps[index].ifCondition = event.target.value;
-  //   setSteps(updatedSteps);
-  // };
 
   const handleIfYesChange = (event, index) => {
-    console.log("in handleIfYes event is ", event.target.value, "and index is", index);
     const updatedSteps = [...steps];
     updatedSteps[index].ifYes = event.target.value;
     setSteps(updatedSteps);
   };
 
   const handleIfNoChange = (event, index) => {
-    console.log("in handleIfNo event is ", event.target.value, "and index is", index);
     const updatedSteps = [...steps];
     updatedSteps[index].ifNo = event.target.value;
     setSteps(updatedSteps);
@@ -178,13 +166,39 @@ export const AddWorkflow = () => {
 
   const handleDeleteStep = (index) => {
     setSteps((prevSteps) => {
-      // Remove the step at the given index
       return [...prevSteps.slice(0, index), ...prevSteps.slice(index + 1)];
     });
   };
 
-  console.log("steps are ", steps);
+  const LevelDropdown = ({ selectedLevel, levels, onSelect }) => (
+    <Select
+      value={selectedLevel}
+      onChange={(e) => onSelect(e.target.value)}
+      style={{ margin: '0 10px' }}
+    >
+      {levels.map((level) => (
+        <MenuItem key={level} value={level}>
+          {`Level ${level}`}
+        </MenuItem>
+      ))}
+    </Select>
+  );
+
+  // Handle level change
+  const handleLevelChange = (selectedLevel, index) => {
+    const updatedSteps = [...steps];
+    const currentStep = updatedSteps[index];
+
+    if (currentStep.type === 'test') {
+      currentStep.level = selectedLevel;
+    }
+
+    setSteps(updatedSteps);
+  };
+
+
   console.log("routines are ", routines);
+  console.log("values are ", values);
 
 
   return (
@@ -237,34 +251,43 @@ export const AddWorkflow = () => {
                   </Select>
 
                   {/* prompt/test options */}
-                  <Select
-                    value={step.data ? step.data.id : ''}
-                    onChange={(e) => handleDataChange(e.target.value, adjustedIndex - 1)}
-                    style={{ margin: '0 10px' }}
-                  >
-                    {step.type === 'test'
-                      ? testList.map((test, i) => {
-                        if (test.level > 1) {
-                          const levels = Array.from({ length: test.level }, (_, j) => j + 1);
-                          return levels.map((level) => (
-                            <MenuItem key={`${i}-${level}`} value={test.id}>
-                              {`${test.name} - Level ${level}`}
-                            </MenuItem>
-                          ));
-                        } else {
-                          return (
-                            <MenuItem key={i} value={test.id}>
-                              {test.name}
-                            </MenuItem>
-                          );
-                        }
-                      })
-                      : promptList.map((prompt, i) => (
+                  {step.type === 'test' ? (
+                    <>
+                      <Select
+                        value={step.data ? step.data.id : ''}
+                        onChange={(e) => handleDataChange(e.target.value, adjustedIndex - 1)}
+                        style={{ margin: '0 10px' }}
+                      >
+                        {testList.map((test, i) => (
+                          <MenuItem key={i} value={test.id}>
+                            {test.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+
+                      {/* Display level dropdown if the test has more than one level */}
+                      {step.data && testList.some((test) => test.id === step.data.id && test.level > 1) && (
+                        <LevelDropdown
+                          selectedLevel={step.level || 1}
+                          levels={Array.from({ length: testList.find((test) => test.id === step.data.id).level }, (_, j) => j + 1)}
+                          onSelect={(selectedLevel) => handleLevelChange(selectedLevel, adjustedIndex - 1)}
+                        />
+                      )}
+                    </>
+                  ) : (
+                    // Prompt options dropdown
+                    <Select
+                      value={step.data ? step.data.id : ''}
+                      onChange={(e) => handleDataChange(e.target.value, adjustedIndex - 1)}
+                      style={{ margin: '0 10px' }}
+                    >
+                      {promptList.map((prompt, i) => (
                         <MenuItem key={i} value={prompt.id}>
                           {prompt.title}
                         </MenuItem>
                       ))}
-                  </Select>
+                    </Select>
+                  )}
 
                   {step.type === 'prompt' && adjustedIndex - 1 !== steps.length - 1 && (
                     <>
@@ -288,15 +311,6 @@ export const AddWorkflow = () => {
                           <MenuItem key={jIndex} value={jIndex + routineIndex + 1}>{`Routine ${jIndex + routineIndex + 2}`}</MenuItem>
                         ))}
                       </Select>
-                      {/* <Select
-                        value={step.jumpTo}
-                        onChange={(e) => handleJumpToChange(e, adjustedIndex - 1)}
-                        style={{ margin: '0 10px' }}
-                      >
-                        {routines.slice(routineIndex + 1).map((jumpToRoutine, jIndex) => (
-                          <MenuItem key={jIndex} value={jIndex + routineIndex + 1}>{`Routine ${jIndex + routineIndex + 2}`}</MenuItem>
-                        ))}
-                      </Select> */}
                     </>
                   )}
 
