@@ -66,7 +66,7 @@ const RuleList = () => {
   const handleDeleteConfirm = async () => {
 
     try {
-      await deleteRule(selectedElement.id);
+      await deleteRule(selectedElement.id, testId);
 
       router.reload()
 
@@ -128,14 +128,14 @@ const RuleList = () => {
                           variant="outlined"
                           color="primary"
                           sx={{ mr: 1 }}
-                          onClick={(event) => handleEditClick(event, rule, test)}
+                          onClick={(event) => handleEditClick(event, rule)}
                         >
                           Edit
                         </Button>
                         <Button
                           variant="outlined"
                           color="error"
-                          onClick={(event) => handleDeleteClick(event, rule, test)}
+                          onClick={(event) => handleDeleteClick(event, rule)}
                         >
                           Delete
                         </Button>

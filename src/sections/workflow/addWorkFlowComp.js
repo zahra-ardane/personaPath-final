@@ -41,6 +41,7 @@ export const AddWorkflow = () => {
   const [testList, setTestList] = useState([]);
   const [promptList, setPromptList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [routines, setRoutines] = useState([]);
 
   useEffect(() => {
     const fetchTestList = async () => {
@@ -68,6 +69,30 @@ export const AddWorkflow = () => {
     fetchTestList();
     fetchPromptList();
   }, []);
+
+
+  useEffect(() => {
+    console.log("in useEffect of routine");
+    const groupStepsIntoRoutines = (steps) => {
+      const routines = [];
+      let currentRoutine = [];
+
+      steps.forEach((step) => {
+        if (step.type === 'test') {
+          currentRoutine.push(step);
+        } else if (step.type === 'prompt') {
+          currentRoutine.push(step);
+          routines.push(currentRoutine);
+          currentRoutine = []; // Reset currentRoutine for the next routine
+        }
+      });
+
+      return routines;
+    };
+
+    setRoutines(groupStepsIntoRoutines(steps));
+  }, [steps]);
+
 
   const handleAddStep = () => {
     setSteps((prevSteps) => {
@@ -132,6 +157,7 @@ export const AddWorkflow = () => {
   };
 
   console.log("steps are ", steps);
+  console.log("routines are ", routines);
 
 
   return (
@@ -144,110 +170,123 @@ export const AddWorkflow = () => {
         required
         value={values.name}
       />
-      {steps.map((step, index) => (
-        <StepCard key={index} style={{ background: step.type === 'test' ? '#e4e9ed' : '#d9cfe6' }}>
+      {routines.map((routine, routineIndex) => (
+        <div key={routineIndex}>
+          {routine.map((step, index) => {
+            const adjustedIndex =
+              routines.reduce((acc, curr, i) => (i < routineIndex ? acc + curr.length : acc), 0) + index + 1;
 
-          {/* Icon */}
-          <StepIcon>
-            {step.type === 'test' ? (
-              <img src="/assets/test.png" alt="Test Icon" style={{ width: '100%', height: '100%' }} />
-            ) : (
-              <img src="/assets/comment.png" alt="Prompt Icon" style={{ width: '100%', height: '100%' }} />
-            )}
-          </StepIcon>
-          <Typography variant="h6" sx={{ color: '#07010f', marginRight: '10px' }}>{`${index + 1}.`}</Typography>
+            return (
+              // Render each step in the routine
+              <StepCard key={index} style={{ background: step.type === 'test' ? '#e4e9ed' : '#d9cfe6' }}>
+                {/* Icon */}
+                <StepIcon>
+                  {step.type === 'test' ? (
+                    <img src="/assets/test.png" alt="Test Icon" style={{ width: '100%', height: '100%' }} />
+                  ) : (
+                    <img src="/assets/comment.png" alt="Prompt Icon" style={{ width: '100%', height: '100%' }} />
+                  )}
+                </StepIcon>
+                <Typography variant="h6" sx={{ color: '#07010f', marginRight: '10px' }}>
+                  {`${adjustedIndex}.`}
+                </Typography>
+                {/* Prompt / Test */}
+                <Select
+                  value={step.type}
+                  onChange={(e) => handleStepTypeChange(e, adjustedIndex - 1)}
+                  disabled={adjustedIndex-1 === 0 || adjustedIndex - 1 === steps.length - 1}
+                  style={{ margin: '0 10px' }}
+                >
+                  <MenuItem value="test">Test</MenuItem>
+                  <MenuItem
+                    value="prompt"
+                    disabled={adjustedIndex - 1 === steps.length - 1}
+                  >
+                    Prompt
+                  </MenuItem>
+                </Select>
 
-          {/* Prompt / Test */}
-          <Select
-            value={step.type}
-            onChange={(e) => handleStepTypeChange(e, index)}
-            disabled={index === 0 || index === steps.length - 1}
-            style={{ margin: '0 10px' }}
-          >
-            <MenuItem value="test">Test</MenuItem>
-            <MenuItem value="prompt" disabled={index === steps.length - 1}>
-              Prompt
-            </MenuItem>
-          </Select>
+                {/* prompt/test options */}
+                <Select
+                  value={step.data}
+                  onChange={(e) => handleDataChange(e, adjustedIndex-1)}
+                  style={{ margin: '0 10px' }}
+                >
+                  {step.type === 'test'
+                    ? testList.map((test, i) => {
+                      if (test.level > 1) {
+                        const levels = Array.from({ length: test.level }, (_, j) => j + 1);
+                        return levels.map((level) => (
+                          <MenuItem key={`${i}-${level}`} value={`${test.name} - Level ${level}`}>
+                            {`${test.name} - Level ${level}`}
+                          </MenuItem>
+                        ));
+                      } else {
+                        return (
+                          <MenuItem key={i} value={test.name}>
+                            {test.name}
+                          </MenuItem>
+                        );
+                      }
+                    })
+                    : promptList.map((prompt, i) => (
+                      <MenuItem key={i} value={prompt.title}>
+                        {prompt.title}
+                      </MenuItem>
+                    ))}
+                </Select>
+                {step.type === 'prompt' && adjustedIndex-1 !== steps.length - 1 && (
+                  <>
+                    <Typography sx={{ color: '#07010f', marginRight: '10px', marginLeft: '30px' }}>if</Typography>
+                    <Select
+                      value={step.ifCondition}
+                      onChange={(e) => handleIfConditionChange(e, adjustedIndex-1)}
+                      style={{ margin: '0 10px' }}
+                    >
+                      <MenuItem value="yes">Yes</MenuItem>
+                      <MenuItem value="no">No</MenuItem>
+                    </Select>
+                    <Select
+                      value={step.jumpTo}
+                      onChange={(e) => handleJumpToChange(e, adjustedIndex-1)}
+                      style={{ margin: '0 10px' }}
+                    >
+                      {steps.slice(adjustedIndex).map((jumpToStep, jIndex) => (
+                        <MenuItem key={jIndex} value={jIndex + index + 2}>{`Step ${jIndex + index + 2}`}</MenuItem>
+                      ))}
+                    </Select>
+                  </>
+                )}
 
-          {/* prompt/test options */}
-          <Select
-            value={step.data}
-            onChange={(e) => handleDataChange(e, index)}
-            style={{ margin: '0 10px' }}
-          >
-            {step.type === 'test'
-              ? testList.map((test, i) => {
-                if (test.level > 1) {
-                  const levels = Array.from({ length: test.level }, (_, j) => j + 1);
-                  return levels.map((level) => (
-                    <MenuItem key={`${i}-${level}`} value={`${test.name} - Level ${level}`}>
-                      {`${test.name} - Level ${level}`}
-                    </MenuItem>
-                  ));
-                } else {
-                  return (
-                    <MenuItem key={i} value={test.name}>
-                      {test.name}
-                    </MenuItem>
-                  );
-                }
-              })
-              : promptList.map((prompt, i) => (
-                <MenuItem key={i} value={prompt.title}>
-                  {prompt.title}
-                </MenuItem>
-              ))}
-          </Select>
-          {step.type === 'prompt' && index !== steps.length - 1 && (
-            <>
-              <Typography sx={{ color: '#07010f', marginRight: '10px', marginLeft: '30px' }}>if</Typography>
-              <Select
-                value={step.ifCondition}
-                onChange={(e) => handleIfConditionChange(e, index)}
-                style={{ margin: '0 10px' }}
-              >
-                <MenuItem value="yes">Yes</MenuItem>
-                <MenuItem value="no">No</MenuItem>
-              </Select>
-              <Select
-                value={step.jumpTo}
-                onChange={(e) => handleJumpToChange(e, index)}
-                style={{ margin: '0 10px' }}
-              >
-                {steps.slice(index + 1).map((jumpToStep, jIndex) => (
-                  <MenuItem key={jIndex} value={jIndex + index + 2}>{`Step ${jIndex + index + 2}`}</MenuItem>
-                ))}
-              </Select>
-            </>
-          )}
-
-          {index !== 0 && index !== steps.length - 1 && ( // Only show delete button for intermediate steps
-            <IconButton
-              edge="end"
-              aria-label="delete"
-              onClick={() => handleDeleteStep(index)}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                right: '40px',
-                transform: 'translateY(-50%)', // Center vertically
-                padding: '4px', // Adjust padding as needed
-                background: 'rgba(255, 255, 255, 0.8)', // Add a background for better visibility
-                borderRadius: '50%', // Make it circular
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
-          )}
+                {adjustedIndex -1 !== 0 && adjustedIndex -1 !== steps.length - 1 && ( // Only show delete button for intermediate steps
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => handleDeleteStep(adjustedIndex-1)}
+                    style={{
+                      position: 'absolute',
+                      top: '50%',
+                      right: '40px',
+                      transform: 'translateY(-50%)', // Center vertically
+                      padding: '4px', // Adjust padding as needed
+                      background: 'rgba(255, 255, 255, 0.8)', // Add a background for better visibility
+                      borderRadius: '50%', // Make it circular
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )}
 
 
-        </StepCard>
-      ))
-      }
+              </StepCard>
+            );
+          })}
+        </div>
+      ))}
       <Button variant="contained" onClick={handleAddStep}>
         New Step
       </Button>
+
     </Container >
   );
 };
