@@ -37,7 +37,7 @@ export const AddWorkflow = () => {
   const [values, setValues] = useState({
     name: ''
   });
-  const [steps, setSteps] = useState([{ type: 'test', data: '' }, { type: 'prompt', data: '', ifCondition: 'yes', jumpTo: '' }]);
+  const [steps, setSteps] = useState([{ type: 'test', data: { id: '', name: '', level: 0 } }, { type: 'prompt', data: { id: '', title: '' }, ifYes: '', ifNo: '' }]);
   const [testList, setTestList] = useState([]);
   const [promptList, setPromptList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -75,7 +75,6 @@ export const AddWorkflow = () => {
     const groupStepsIntoRoutines = (steps) => {
       const routines = [];
       let currentRoutine = [];
-
       steps.forEach((step) => {
         if (step.type === 'test') {
           currentRoutine.push(step);
@@ -96,9 +95,10 @@ export const AddWorkflow = () => {
   const handleAddStep = () => {
     setSteps((prevSteps) => {
       const lastPromptValue = prevSteps[prevSteps.length - 1].data;
+      const lastPromptId = prevSteps[prevSteps.length - 1].id;
       return [
         ...prevSteps.slice(0, -1),
-        { type: 'test', data: '' },
+        { type: 'test', data: { id: '', name: '', level: 0 } },
         { type: 'prompt', data: lastPromptValue },
       ];
     });
@@ -114,28 +114,56 @@ export const AddWorkflow = () => {
 
     // Add default values for ifCondition and jumpTo when changing to 'prompt'
     if (newType === 'prompt') {
-      updatedSteps[index].ifCondition = 'yes';
-      updatedSteps[index].jumpTo = '';
+      updatedSteps[index].ifYes = '';
+      updatedSteps[index].ifNo = '';
+      // updatedSteps[index].jumpTo = '';
+    } else {
+      updatedSteps[index].level = '';
     }
 
+
     setSteps(updatedSteps);
   };
 
-  const handleDataChange = (event, index) => {
+  const handleDataChange = (selectedValue, index) => {
+    console.log("selectedVlaue is ", selectedValue);
+    console.log("index is ", index);
+
     const updatedSteps = [...steps];
-    updatedSteps[index].data = event.target.value;
+    const currentStep = updatedSteps[index];
+  
+    if (currentStep.type === 'test') {
+      const selectedTest = testList.find((test) => test.id === selectedValue);
+      currentStep.data = { id: selectedTest.id, name: selectedTest.name, level: selectedTest.level };
+      currentStep.id = selectedTest.id;
+      currentStep.level = selectedTest.level;
+    } else if (currentStep.type === 'prompt') {
+      const selectedPrompt = promptList.find((prompt) => prompt.id === selectedValue);
+      currentStep.data = { id: selectedPrompt.id, title: selectedPrompt.title };
+      currentStep.id = selectedPrompt.id;
+    }
+  
+    setSteps(updatedSteps);
+  };
+  
+
+  // const handleIfConditionChange = (event, index) => {
+  //   const updatedSteps = [...steps];
+  //   updatedSteps[index].ifCondition = event.target.value;
+  //   setSteps(updatedSteps);
+  // };
+
+  const handleIfYesChange = (event, index) => {
+    console.log("in handleIfYes event is ", event.target.value, "and index is", index);
+    const updatedSteps = [...steps];
+    updatedSteps[index].ifYes = event.target.value;
     setSteps(updatedSteps);
   };
 
-  const handleIfConditionChange = (event, index) => {
+  const handleIfNoChange = (event, index) => {
+    console.log("in handleIfNo event is ", event.target.value, "and index is", index);
     const updatedSteps = [...steps];
-    updatedSteps[index].ifCondition = event.target.value;
-    setSteps(updatedSteps);
-  };
-
-  const handleJumpToChange = (event, index) => {
-    const updatedSteps = [...steps];
-    updatedSteps[index].jumpTo = event.target.value;
+    updatedSteps[index].ifNo = event.target.value;
     setSteps(updatedSteps);
   };
 
@@ -210,8 +238,8 @@ export const AddWorkflow = () => {
 
                   {/* prompt/test options */}
                   <Select
-                    value={step.data}
-                    onChange={(e) => handleDataChange(e, adjustedIndex - 1)}
+                    value={step.data ? step.data.id : ''}
+                    onChange={(e) => handleDataChange(e.target.value, adjustedIndex - 1)}
                     style={{ margin: '0 10px' }}
                   >
                     {step.type === 'test'
@@ -219,36 +247,48 @@ export const AddWorkflow = () => {
                         if (test.level > 1) {
                           const levels = Array.from({ length: test.level }, (_, j) => j + 1);
                           return levels.map((level) => (
-                            <MenuItem key={`${i}-${level}`} value={`${test.name} - Level ${level}`}>
+                            <MenuItem key={`${i}-${level}`} value={test.id}>
                               {`${test.name} - Level ${level}`}
                             </MenuItem>
                           ));
                         } else {
                           return (
-                            <MenuItem key={i} value={test.name}>
+                            <MenuItem key={i} value={test.id}>
                               {test.name}
                             </MenuItem>
                           );
                         }
                       })
                       : promptList.map((prompt, i) => (
-                        <MenuItem key={i} value={prompt.title}>
+                        <MenuItem key={i} value={prompt.id}>
                           {prompt.title}
                         </MenuItem>
                       ))}
                   </Select>
+
                   {step.type === 'prompt' && adjustedIndex - 1 !== steps.length - 1 && (
                     <>
-                      <Typography sx={{ color: '#07010f', marginRight: '10px', marginLeft: '30px' }}>if</Typography>
+                      <Typography sx={{ color: '#07010f', marginRight: '10px', marginLeft: '30px' }}>if yes</Typography>
                       <Select
-                        value={step.ifCondition}
-                        onChange={(e) => handleIfConditionChange(e, adjustedIndex - 1)}
+                        value={step.ifYes}
+                        onChange={(e) => handleIfYesChange(e, adjustedIndex - 1)}
                         style={{ margin: '0 10px' }}
                       >
-                        <MenuItem value="yes">Yes</MenuItem>
-                        <MenuItem value="no">No</MenuItem>
+                        {routines.slice(routineIndex + 1).map((jumpToRoutine, jIndex) => (
+                          <MenuItem key={jIndex} value={jIndex + routineIndex + 1}>{`Routine ${jIndex + routineIndex + 2}`}</MenuItem>
+                        ))}
                       </Select>
+                      <Typography sx={{ color: '#07010f', marginRight: '10px', marginLeft: '30px' }}>if no</Typography>
                       <Select
+                        value={step.ifNo}
+                        onChange={(e) => handleIfNoChange(e, adjustedIndex - 1)}
+                        style={{ margin: '0 10px' }}
+                      >
+                        {routines.slice(routineIndex + 1).map((jumpToRoutine, jIndex) => (
+                          <MenuItem key={jIndex} value={jIndex + routineIndex + 1}>{`Routine ${jIndex + routineIndex + 2}`}</MenuItem>
+                        ))}
+                      </Select>
+                      {/* <Select
                         value={step.jumpTo}
                         onChange={(e) => handleJumpToChange(e, adjustedIndex - 1)}
                         style={{ margin: '0 10px' }}
@@ -256,7 +296,7 @@ export const AddWorkflow = () => {
                         {routines.slice(routineIndex + 1).map((jumpToRoutine, jIndex) => (
                           <MenuItem key={jIndex} value={jIndex + routineIndex + 1}>{`Routine ${jIndex + routineIndex + 2}`}</MenuItem>
                         ))}
-                      </Select>
+                      </Select> */}
                     </>
                   )}
 
