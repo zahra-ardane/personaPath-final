@@ -40,7 +40,7 @@ export const AddWorkflow = () => {
   const [values, setValues] = useState({
     workflowName: ''
   });
-  const [steps, setSteps] = useState([{ type: 'test', data: { id: '', name: '' }, level: 0 }, { type: 'prompt', data: { id: '', title: '' }, ifYes: '', ifNo: null }]);
+  const [steps, setSteps] = useState([{ type: 'test', data: { id: '', name: '' }, level: 1 }, { type: 'prompt', data: { id: '', title: '' }, ifYes: '', ifNo: null }]);
   const [testList, setTestList] = useState([]);
   const [promptList, setPromptList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -104,7 +104,7 @@ export const AddWorkflow = () => {
       const lastPromptId = prevSteps[prevSteps.length - 1].id;
       return [
         ...prevSteps.slice(0, -1),
-        { type: 'test', data: { id: '', name: '' }, level: 0 },
+        { type: 'test', data: { id: '', name: '' }, level: 1 },
         { type: 'prompt', data: lastPromptValue },
       ];
     });
@@ -121,10 +121,9 @@ export const AddWorkflow = () => {
     // Add default values for ifCondition and jumpTo when changing to 'prompt'
     if (newType === 'prompt') {
       updatedSteps[index].ifYes = '';
-      updatedSteps[index].ifNo = '';
-      // updatedSteps[index].jumpTo = '';
+      updatedSteps[index].ifNo = null;
     } else {
-      updatedSteps[index].level = '';
+      updatedSteps[index].level = 1;
     }
 
 
@@ -190,7 +189,6 @@ export const AddWorkflow = () => {
     </Select>
   );
 
-
   // Handle level change
   const handleLevelChange = (selectedLevel, index) => {
     const updatedSteps = [...steps];
@@ -221,7 +219,6 @@ export const AddWorkflow = () => {
             tests: [],
             prompt: null
           };
-          console.log("subArray is ", subArray);
           subArray.forEach(item => {
             if (item.type === 'test') {
               routinObject.tests.push(`${item.data.id}//${item.level}`);
@@ -237,29 +234,26 @@ export const AddWorkflow = () => {
           return routinObject;
         });
 
-        console.log("transformedArray is", transformedArray);
         const data = {
           workflowName: values.workflowName,
           status: "active",
           routin: transformedArray,
         };
 
-        console.log("last but nt least data is", data);
-
         // Call the API to post the data
-        // const createdWorfklow = await postWorkflow(data);
-        // console.log("this is createdWorkflow", createdWorfklow);
+        const createdWorfklow = await postWorkflow(data);
+        console.log("this is createdWorkflow", createdWorfklow);
 
-        // router.reload();
+        router.reload();
       } catch (error) {
-        console.error('Error submitting the test:', error);
+        console.error('Error submitting the workflow:', error);
       }
     },
     [values, routines, router]
   );
 
-  console.log("routines are ", routines);
-  console.log("values are ", values);
+  // console.log("routines are ", routines);
+  // console.log("values are ", values);
 
 
   return (
