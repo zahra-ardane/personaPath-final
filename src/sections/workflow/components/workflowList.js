@@ -47,13 +47,7 @@ export const WorkflowList = () => {
   const handleEditClick = (event, item) => {
     // Stop event propagation to prevent the row click event
     event.stopPropagation();
-
-    // Convert the test object to a JSON string
-    const data = JSON.stringify(item);
-    // Encode the JSON string to base64
-    const encodedData = btoa(data);
-
-    // router.push(`/test/editTest?data=${encodedTestData}`);
+    router.push(`/workflow/edit/${item._id}`);
   };
 
   const handleItemClick = (item) => {

@@ -131,9 +131,6 @@ export const AddWorkflow = () => {
   };
 
   const handleDataChange = (selectedValue, index) => {
-    console.log("selectedVlaue is ", selectedValue);
-    console.log("index is ", index);
-
     const updatedSteps = [...steps];
     const currentStep = updatedSteps[index];
 
@@ -242,9 +239,9 @@ export const AddWorkflow = () => {
 
         // Call the API to post the data
         const createdWorfklow = await postWorkflow(data);
-        console.log("this is createdWorkflow", createdWorfklow);
+        // console.log("this is createdWorkflow", createdWorfklow);
 
-        // router.reload();
+        router.reload();
       } catch (error) {
         console.error('Error submitting the workflow:', error);
       }

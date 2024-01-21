@@ -42,7 +42,7 @@ const RuleDetails = () => {
     }
   }, [data]);
 
-  console.log("rule isssssssss ", rule);
+  // console.log("rule isssssssss ", rule);
 
   return (
     <>
