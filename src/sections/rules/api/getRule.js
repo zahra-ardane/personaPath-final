@@ -4,7 +4,7 @@ import axiosInstance from '../../../lib/axiosInstance';
 const getRule = async (ruleId, testId) => {
   try {
     // console.log("test id in getQuestions ", testId);
-    const response = await axiosInstance.get(`/rules/getRulesById/${ruleId}/${testId}`);
+    const response = await axiosInstance.get(`/rules/getRuleById/${ruleId}/${testId}`);
     return response.data;
 
     // return ([

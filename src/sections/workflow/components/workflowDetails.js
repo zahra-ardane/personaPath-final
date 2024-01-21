@@ -1,6 +1,6 @@
 // components/workflowDetails.js
 import React, { useEffect, useState } from 'react';
-import { Typography, Box, Divider } from '@mui/material';
+import { Typography, Box, Divider, CircularProgress } from '@mui/material';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -14,6 +14,7 @@ const WorkflowDetails = () => {
 
   const [workflow, setWorkflow] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [routinesLoading, setRoutinesLoading] = useState(true);
   const [renderedRoutines, setRenderedRoutines] = useState(null);
 
   useEffect(() => {
@@ -90,32 +91,38 @@ const WorkflowDetails = () => {
               : `Jump to routine ${item?.prompt.no + 1}`;
 
           return (
-            <React.Fragment key={index}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, pl: 2 }}>
-                Routine {item.id + 1}
-              </Typography>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', pl: 4 }}>
-                Tests:
-              </Typography>
-              <Typography sx={{ pl: 8, pt: 2 }}>
-                {tests}
-              </Typography>
+            <>
+              {
+                setRoutinesLoading(false)
+              }
+              <React.Fragment key={index}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, pl: 2 }}>
+                  Routine {item.id + 1}
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', pl: 4 }}>
+                  Tests:
+                </Typography>
+                <Typography sx={{ pl: 8, pt: 2 }}>
+                  {tests}
+                </Typography>
 
-              <Typography sx={{ pl: 4 }}>
-                <span>
-                  <Typography component="span" sx={{ fontWeight: 'bold' }}>
-                    Prompt:
-                  </Typography>
-                  <Typography sx={{ pl: 3}}>
-                    If Yes: {promptYes}
-                  </Typography>
-                  <Typography sx={{ pl: 3}}>
-                    If No: {promptNo}
-                  </Typography>
-                </span>
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-            </React.Fragment>
+                <Typography sx={{ pl: 4 }}>
+                  <span>
+                    <Typography component="span" sx={{ fontWeight: 'bold' }}>
+                      Prompt:
+                    </Typography>
+                    <Typography sx={{ pl: 3 }}>
+                      If Yes: {promptYes}
+                    </Typography>
+                    <Typography sx={{ pl: 3 }}>
+                      If No: {promptNo}
+                    </Typography>
+                  </span>
+                </Typography>
+                <Divider sx={{ my: 2 }} />
+              </React.Fragment>
+            </>
+
           );
         })
       );
@@ -134,8 +141,13 @@ const WorkflowDetails = () => {
 
       <Divider sx={{ my: 2 }} />
 
-
-      {renderedRoutines}
+      {!isLoading && !routinesLoading ? (
+        renderedRoutines
+      ) : (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
+          <CircularProgress />
+        </Box>
+      )}
     </>
   );
 };
