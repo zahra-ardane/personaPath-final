@@ -66,7 +66,7 @@ const RuleDetails = () => {
               <>
                 <li key={index}>
                   {item?.question?.map((itemQuestion, index) => (
-                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#666' }}>
+                    <Typography key={index} variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#666' }}>
                       {itemQuestion.questionText.english}
                     </Typography>
                   ))}

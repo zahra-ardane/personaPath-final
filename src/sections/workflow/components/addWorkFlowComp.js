@@ -221,12 +221,12 @@ export const AddWorkflow = () => {
           };
           subArray.forEach(item => {
             if (item.type === 'test') {
-              routinObject.tests.push(`${item.data.id}//${item.level}`);
+              routinObject.tests.push(`${item.data.id}/${item.level}`);
             } else if (item.type === 'prompt') {
               routinObject.prompt = {
-                id: item.data.id,
-                yes: item.ifYes !== undefined ? item.ifYes : null,
-                no: item.ifNo !== undefined ? item.ifNo : null
+                // id: item.data.id,
+                yes: item.ifYes ? item.ifYes : item.data.id,
+                no: item.ifNo ? item.ifNo : item.data.id
               };
             }
           });
@@ -244,7 +244,7 @@ export const AddWorkflow = () => {
         const createdWorfklow = await postWorkflow(data);
         console.log("this is createdWorkflow", createdWorfklow);
 
-        router.reload();
+        // router.reload();
       } catch (error) {
         console.error('Error submitting the workflow:', error);
       }

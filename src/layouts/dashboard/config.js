@@ -38,8 +38,8 @@ export const items = [
     )
   },
   {
-    title: 'Workflow',
-    path: '/workflow/addWorkflow',
+    title: 'Workflows',
+    path: '/workflow/workflows',
     icon: (
       <SvgIcon fontSize="small">
         <PlusCircleIcon />
