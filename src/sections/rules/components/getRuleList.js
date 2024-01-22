@@ -1,9 +1,12 @@
 // components/RuleList.js
 import React, { useState, useEffect } from 'react';
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, CircularProgress, Box } from '@mui/material';
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, CircularProgress, Box, Link } from '@mui/material';
+import NextLink from 'next/link';
+
 import DeleteRuleDialog from './deleteRuleDialog';
 import deleteRule from '../api/deleteRule'
 import getRuleList from '../api/getRuleList'
+
 import { useRouter } from 'next/router';
 
 const RuleList = () => {
@@ -101,8 +104,6 @@ const RuleList = () => {
               Rules
             </Typography>
 
-
-
             <TableContainer component={Paper} sx={{ mt: 5 }}>
               <Table>
                 <TableHead>
@@ -154,6 +155,19 @@ const RuleList = () => {
               // questionName={selectedElement?.questionText?.english}
               />
             )}
+
+            <NextLink href={`/rules/addRule/${testId}`} passHref >
+              <Link underline="none">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2, alignSelf: 'left', width: '20%' }}
+                >
+                  Add Rule
+                </Button>
+              </Link>
+            </NextLink>
+
           </>
 
           : (

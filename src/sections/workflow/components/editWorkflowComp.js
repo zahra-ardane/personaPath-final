@@ -352,7 +352,7 @@ export const EditWorkflow = () => {
                 return (
                   <React.Fragment key={index}>
                     {index === 0 && routineIndex > 0 && (
-                      <div style={{ border: '1px solid #000', marginBottom: '10px' }}></div>
+                      <div style={{ border: '1px solid #888', marginBottom: '10px' }}></div>
                     )}
                     <StepCard key={index} style={{ background: step.type === 'test' ? '#e4e9ed' : '#d9cfe6' }}>
 
