@@ -50,14 +50,9 @@ const RuleList = () => {
   const handleEditClick = (event, rule, test) => {
     event.stopPropagation();
 
-    const tempData = {
-      question,
-      rule
-    }
+    const encodedData = btoa(encodeURIComponent(JSON.stringify(rule)));
 
-    const encodedData = btoa(encodeURIComponent(JSON.stringify(tempData)));
-
-    router.push(`/rules/editRule?data=${encodedData}`);
+    router.push(`/rules/editRule/${testId}?data=${encodedData}`);
   };
 
   const handleDeleteClick = (event, rule, test) => {

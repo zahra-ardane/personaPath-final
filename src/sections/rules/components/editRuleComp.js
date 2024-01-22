@@ -9,16 +9,16 @@ import { styled } from '@mui/system';
 // ** API imports
 import getTestById from '../../tests/api/getTestById';
 import getQuestions from '../../questions/api/getQuestions';
-import postRule from '../api/postRule'
+import editRule from '../api/editRule'
 
 const Container = styled('div')(({ theme }) => ({
   padding: theme.spacing(2),
 }));
 
-export const AddRule = () => {
+export const EditRule = () => {
 
   const router = useRouter();
-  const { testId } = router.query;
+  const { testId, data } = router.query;
 
   const [values, setValues] = useState({
     report: {
@@ -33,12 +33,13 @@ export const AddRule = () => {
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [conditions, setConditions] = useState([{ question: [], option: { english: '', persian: '' }, optionNo: null }]);
+  const [rule, setRule] = useState(null);
+  const [initialData, setInitialData] = useState(null);
 
   const [groupedQuestions, setGroupedQuestions] = useState([]);
 
 
   const filteredQuestions = questions.filter((question) => question.type == 0 && question.level == values.levelQuestions);
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,43 +61,79 @@ export const AddRule = () => {
     fetchData();
   }, [testId]);
 
+  useEffect(() => {
+    if (data) {
+      try {
+        // Decode the base64-encoded data
+        const decodedData = atob(data);
+        // Parse the JSON string to get the question and test data
+        const rule = JSON.parse(decodeURIComponent(decodedData));
 
+        setConditions(rule.items);
+        setValues({
+          ...values,
+          report: rule.report,
+          type: rule.type,
+          levelQuestions: rule.levelQuestions
+        });
+
+        // Set the data to the state
+        setRule(rule);
+        setInitialData(rule);
+      } catch (error) {
+        console.error('Error decoding or parsing data:', error);
+      }
+    }
+  }, [data]);
 
   useEffect(() => {
-    if (values.type == 1 && filteredQuestions.length > 0) {
-      const grouped = [];
-      for (let i = 0; i < filteredQuestions.length; i += parseInt(values.groupSize, 10)) {
-        grouped.push(filteredQuestions.slice(i, i + parseInt(values.groupSize, 10)));
-      }
-
-      // Find the common minimum number of options across grouped questions
-      const commonOptions = grouped.map((group) =>
-        Math.min(...group.map((question) => question.options.length))
-      );
-
-      // Update the groupedQuestions state
-      setGroupedQuestions(grouped.map((group, index) => ({
-        questions: group,
-        commonOptions: commonOptions[index],
-      })));
-
-      // Set default conditions for grouped questions
-      setConditions(grouped.map((group, index) => ({
-        question: group,
-        option: { english: '', persian: '' },
-        optionNo: 0,
-      })));
-
+    if (initialData) {
+      console.log("this is called");
+      setConditions(initialData.items);
+      setValues({
+        ...values,
+        report: initialData.report,
+        type: initialData.type,
+        levelQuestions: initialData.levelQuestions
+      });
+      setInitialData(null)
     } else {
-      const defaultQuestion = [filteredQuestions[0]];
-      const defaultOption = defaultQuestion[0]?.options[0];
-      setConditions([
-        { question: defaultQuestion, option: defaultOption, optionNo: 0 },
-        { question: defaultQuestion, option: defaultOption, optionNo: 0 },
-      ]);
-    }
-  }, [questions, values.type, values.groupSize, values.levelQuestions]);
+      if (values.type == 1 && filteredQuestions.length > 0) {
+        // This is the logic for the second useEffect when initial data has been loaded
+        const grouped = [];
+        for (let i = 0; i < filteredQuestions.length; i += parseInt(values.groupSize, 10)) {
+          grouped.push(filteredQuestions.slice(i, i + parseInt(values.groupSize, 10)));
+        }
 
+        // Find the common minimum number of options across grouped questions
+        const commonOptions = grouped.map((group) =>
+          Math.min(...group.map((question) => question.options.length))
+        );
+
+        // Update the groupedQuestions state
+        setGroupedQuestions(grouped.map((group, index) => ({
+          questions: group,
+          commonOptions: commonOptions[index],
+        })));
+
+        // Set default conditions for grouped questions
+        setConditions(grouped.map((group, index) => ({
+          question: group,
+          option: { english: '', persian: '' },
+          optionNo: 0,
+        })));
+
+      } else {
+        const defaultQuestion = [filteredQuestions[0]];
+        const defaultOption = defaultQuestion[0]?.options[0];
+        setConditions([
+          { question: defaultQuestion, option: defaultOption, optionNo: 0 },
+          { question: defaultQuestion, option: defaultOption, optionNo: 0 },
+        ]);
+      }
+    }
+
+  }, [questions, values.type, values.groupSize, values.levelQuestions]);
 
   const addCondition = () => {
     setConditions((prevConditions) => [
@@ -178,20 +215,12 @@ export const AddRule = () => {
         };
 
         // Call the API to post the rule
-        const createdRule = await postRule(ruleData, test.id);
-        // console.log("created rule is ", createdRule);
+        const createdRule = await editRule(ruleData, testId, rule.id);
+        console.log("created rule is ", createdRule);
 
-        router.reload();
-        // Encode the createdTest object
-        // const encodedTest = btoa(JSON.stringify(createdTest));
+        // router.reload();
+        router.push(`/rules/ruleList/${testId}`)
 
-        // // Navigate to different routes based on the button clicked
-        // if (event.target.innerText == 'Finish') {
-        //   router.push('/');
-        // } else if (event.target.innerText == 'Add Questions') {
-        //   // Pass the encoded test data as a route parameter
-        //   router.push('/questions/addQuestion/[testId]', `/questions/addQuestion/${createdTest.id}?testData=${encodeURIComponent(encodedTest)}`);
-        // }
       } catch (error) {
         console.error('Error submitting the test:', error);
         // Handle error feedback to the user if needed
@@ -209,7 +238,7 @@ export const AddRule = () => {
     );
   }
 
-  // console.log("conditions is", conditions);
+  console.log("conditions is", conditions);
   // console.log("values is", values);
 
 
@@ -412,7 +441,7 @@ export const AddRule = () => {
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
                 <Button variant="contained" color="primary" onClick={handleSubmit}>
-                  Add Rule
+                  Edit Rule
                 </Button>
               </div>
 
