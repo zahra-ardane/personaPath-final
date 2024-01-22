@@ -67,12 +67,13 @@ const WorkflowDetails = () => {
       const renderedRoutines = await Promise.all(
         routines.map(async (item, index) => {
           const tests = await Promise.all(
-            (item?.tests || []).map(async (test, index) => {
+            (item?.tests || []).map(async (test, indexed) => {
               const [testId, testLevel] = test.split('/');
               const testDetails = await getTestDetailsById(testId);
+              const uniqueKey = `${indexed}_${testId}`; 
               return (
-                <li>
-                  <Typography key={index} variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#666' }}>
+                <li key={uniqueKey}>
+                  <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#666' }}>
                     {`${testDetails?.name} - Level ${testLevel}`}
                   </Typography>
                 </li>
