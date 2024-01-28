@@ -317,9 +317,9 @@ export const EditWorkflow = () => {
 
         // Call the API to post the data
         const editedWorkflow = await editWorkflow(data, id);
-        console.log("this is editedWorkflow", editedWorkflow);
+        // console.log("this is editedWorkflow", editedWorkflow);
 
-        // router.reload();
+        router.reload();
       } catch (error) {
         console.error('Error submitting the workflow in edit:', error);
       }

@@ -102,7 +102,7 @@ export const AddPrompt = () => {
                   onChange={handleChange}
                   multiline
                   required
-                  rows={4}
+                  rows={8}
                   value={values.text}
                 />
               </Grid>

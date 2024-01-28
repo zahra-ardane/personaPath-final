@@ -3,7 +3,7 @@ import axiosInstance from '../../../lib/axiosInstance';
 
 const editRule = async (data, testId, ruleId) => {
   try {
-    // console.log("data being sent in createRule is ", data);
+    console.log("data being sent in editRule is ", data);
 
     const response = await axiosInstance.put(`/rules/updateRuleById/${ruleId}/${testId}`, data);
     return response.data;

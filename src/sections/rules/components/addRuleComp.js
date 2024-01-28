@@ -88,11 +88,14 @@ export const AddRule = () => {
       })));
 
     } else {
-      const defaultQuestion = [filteredQuestions[0]];
-      const defaultOption = defaultQuestion[0]?.options[0];
+      const defaultQuestions = filteredQuestions.slice(0, 4);
+      const defaultOptions = defaultQuestions.map(question => question?.options[0]);
+
       setConditions([
-        { question: defaultQuestion, option: defaultOption, optionNo: 0 },
-        { question: defaultQuestion, option: defaultOption, optionNo: 0 },
+        { question: [defaultQuestions[0]], option: defaultOptions[0], optionNo: 0 },
+        { question: [defaultQuestions[1]], option: defaultOptions[1], optionNo: 0 },
+        { question: [defaultQuestions[2]], option: defaultOptions[2], optionNo: 0 },
+        { question: [defaultQuestions[3]], option: defaultOptions[3], optionNo: 0 },
       ]);
     }
   }, [questions, values.type, values.groupSize, values.levelQuestions]);
@@ -182,16 +185,7 @@ export const AddRule = () => {
         // console.log("created rule is ", createdRule);
 
         router.reload();
-        // Encode the createdTest object
-        // const encodedTest = btoa(JSON.stringify(createdTest));
 
-        // // Navigate to different routes based on the button clicked
-        // if (event.target.innerText == 'Finish') {
-        //   router.push('/');
-        // } else if (event.target.innerText == 'Add Questions') {
-        //   // Pass the encoded test data as a route parameter
-        //   router.push('/questions/addQuestion/[testId]', `/questions/addQuestion/${createdTest.id}?testData=${encodeURIComponent(encodedTest)}`);
-        // }
       } catch (error) {
         console.error('Error submitting the test:', error);
         // Handle error feedback to the user if needed

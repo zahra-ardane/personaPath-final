@@ -45,7 +45,6 @@ const WorkflowDetails = () => {
   const getPromptDetailsById = async (promptId) => {
     try {
       const promptDetails = await getPromptById(promptId);
-      console.log("this is prompts' details right ?", promptDetails);
       return promptDetails;
     } catch (error) {
       console.error("Error fetching prompt details in workflow", error);
@@ -70,13 +69,14 @@ const WorkflowDetails = () => {
             (item?.tests || []).map(async (test, indexed) => {
               const [testId, testLevel] = test.split('/');
               const testDetails = await getTestDetailsById(testId);
-              const uniqueKey = `${indexed}_${testId}`; 
+              const uniqueKey = `${indexed}_${testId}`;
               return (
-                <li key={uniqueKey}>
-                  <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold', color: '#666' }}>
+                //  key={uniqueKey}
+                <Typography sx={{ mb: 2, fontWeight: 'bold', color: '#666' }}>
+                  <li key={uniqueKey} style={{ listStylePosition: 'inside' }}>
                     {`${testDetails?.name} - Level ${testLevel}`}
-                  </Typography>
-                </li>
+                  </li>
+                </Typography>
               );
             })
           );
@@ -97,7 +97,7 @@ const WorkflowDetails = () => {
                 setRoutinesLoading(false)
               }
               <React.Fragment key={index}>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, pl: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, pl: 2, pt:1 }}>
                   Routine {item.id + 1}
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: 'bold', pl: 4 }}>
@@ -112,10 +112,10 @@ const WorkflowDetails = () => {
                     <Typography component="span" sx={{ fontWeight: 'bold' }}>
                       Prompt:
                     </Typography>
-                    <Typography sx={{ pl: 3 }}>
+                    <Typography sx={{ pl: 3, pt:2 }}>
                       If Yes: {promptYes}
                     </Typography>
-                    <Typography sx={{ pl: 3 }}>
+                    <Typography sx={{ pl: 3, pt: 2 }}>
                       If No: {promptNo}
                     </Typography>
                   </span>

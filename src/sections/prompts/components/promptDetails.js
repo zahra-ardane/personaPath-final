@@ -45,7 +45,7 @@ const PromptDetails = () => {
       <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
         Text: 
       </Typography>
-      <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
+      <Typography sx={{ mb: 2}}>
         {prompt.text}
       </Typography>
 

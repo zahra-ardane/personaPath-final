@@ -88,7 +88,6 @@ export const EditRule = () => {
 
   useEffect(() => {
     if (initialData) {
-      console.log("this is called");
       setConditions(initialData.items);
       setValues({
         ...values,
@@ -105,30 +104,49 @@ export const EditRule = () => {
           grouped.push(filteredQuestions.slice(i, i + parseInt(values.groupSize, 10)));
         }
 
-        // Find the common minimum number of options across grouped questions
-        const commonOptions = grouped.map((group) =>
-          Math.min(...group.map((question) => question.options.length))
-        );
+        const existingOptionNos = [];
+
+        for (let i = 0; i < conditions.length ; i++) {
+          existingOptionNos.push(conditions[i].optionNo);
+        }
 
         // Update the groupedQuestions state
         setGroupedQuestions(grouped.map((group, index) => ({
           questions: group,
-          commonOptions: commonOptions[index],
+          optionNo: existingOptionNos[index],
         })));
 
         // Set default conditions for grouped questions
         setConditions(grouped.map((group, index) => ({
           question: group,
           option: { english: '', persian: '' },
-          optionNo: 0,
+          optionNo: groupedQuestions[index]?.optionNo,
         })));
 
-      } else {
-        const defaultQuestion = [filteredQuestions[0]];
-        const defaultOption = defaultQuestion[0]?.options[0];
+      }
+      else {
+        const existingQuestions = [];
+        const existingOptions = [];
+        const existingOptionNos = [];
+
+        // Extract the first four questions collectively from all conditions
+        for (let i = 0; i < conditions.length && existingQuestions.length < 4; i++) {
+          const questionsInCondition = conditions[i].question;
+          existingOptions.push(conditions[i].option);
+          existingOptionNos.push(conditions[i].optionNo);
+
+          // Add each question, option, and optionNo from the condition to the respective arrays
+          for (let j = 0; j < questionsInCondition.length && existingQuestions.length < 4; j++) {
+            existingQuestions.push(questionsInCondition[j]);
+          }
+        }
+
+        // Update conditions based on existing questions, options, and optionNos
         setConditions([
-          { question: defaultQuestion, option: defaultOption, optionNo: 0 },
-          { question: defaultQuestion, option: defaultOption, optionNo: 0 },
+          { question: [existingQuestions[0]], option: existingOptions[0], optionNo: existingOptionNos[0] },
+          { question: [existingQuestions[1]], option: existingOptions[1], optionNo: existingOptionNos[1] },
+          { question: [existingQuestions[2]], option: existingOptions[2], optionNo: existingOptionNos[2] },
+          { question: [existingQuestions[3]], option: existingOptions[3], optionNo: existingOptionNos[3] },
         ]);
       }
     }
@@ -216,7 +234,7 @@ export const EditRule = () => {
 
         // Call the API to post the rule
         const createdRule = await editRule(ruleData, testId, rule.id);
-        console.log("created rule is ", createdRule);
+        // console.log("edited rule is ", createdRule);
 
         // router.reload();
         router.push(`/rules/ruleList/${testId}`)
@@ -226,7 +244,7 @@ export const EditRule = () => {
         // Handle error feedback to the user if needed
       }
     },
-    [values, router]
+    [values, router, conditions]
   );
 
 
@@ -238,7 +256,7 @@ export const EditRule = () => {
     );
   }
 
-  console.log("conditions is", conditions);
+  // console.log("conditions is", conditions);
   // console.log("values is", values);
 
 

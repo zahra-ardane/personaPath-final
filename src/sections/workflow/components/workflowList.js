@@ -78,7 +78,7 @@ export const WorkflowList = () => {
     setDeleteDialogOpen(false);
   };
 
-  console.log("this is list ", list);
+  // console.log("this is list ", list);
 
   return (
     <>
