@@ -21,7 +21,7 @@ const Page = () => (
         <Stack spacing={3}>
           <div>
             <Typography variant="h4">
-              Edit your test's question here!
+              Edit your tests question here!
             </Typography>
           </div>
           <div>

@@ -72,7 +72,7 @@ const WorkflowDetails = () => {
               const uniqueKey = `${indexed}_${testId}`;
               return (
                 //  key={uniqueKey}
-                <Typography sx={{ mb: 2, fontWeight: 'bold', color: '#666' }}>
+                <Typography key={uniqueKey} sx={{ mb: 2, fontWeight: 'bold', color: '#666' }}>
                   <li key={uniqueKey} style={{ listStylePosition: 'inside' }}>
                     {`${testDetails?.name} - Level ${testLevel}`}
                   </li>

@@ -9,7 +9,7 @@ const page = () => (
   <>
     <Head>
       <title>
-        Rule's Details
+        Rule Details
       </title>
     </Head>
     <Box
