@@ -57,7 +57,7 @@ const QuestionDetails = () => {
       <Divider sx={{ my: 2 }} />
 
 
-      <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
+      <Typography sx={{ mb: 2}}>
         English Title: {questionData?.questionText?.english}
       </Typography>
 

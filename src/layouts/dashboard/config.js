@@ -7,6 +7,11 @@ import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import PlusCircleIcon from '@heroicons/react/24/solid/PlusCircleIcon';
+import RectangleStackIcon from '@heroicons/react/24/solid/RectangleStackIcon';
+import ChatBubbleBottomCenterTextIcon from '@heroicons/react/24/solid/ChatBubbleBottomCenterTextIcon';
+import NewspaperIcon from '@heroicons/react/24/solid/NewspaperIcon';
+
+
 import { SvgIcon } from '@mui/material';
 
 export const items = [
@@ -15,7 +20,7 @@ export const items = [
     path: '/',
     icon: (
       <SvgIcon fontSize="small">
-        <PlusCircleIcon />
+        <NewspaperIcon />
       </SvgIcon>
     )
   },
@@ -33,7 +38,7 @@ export const items = [
     path: '/prompts/promptList',
     icon: (
       <SvgIcon fontSize="small">
-        <PlusCircleIcon />
+        <ChatBubbleBottomCenterTextIcon />
       </SvgIcon>
     )
   },
@@ -42,7 +47,7 @@ export const items = [
     path: '/workflow/workflows',
     icon: (
       <SvgIcon fontSize="small">
-        <PlusCircleIcon />
+        <RectangleStackIcon />
       </SvgIcon>
     )
   }
