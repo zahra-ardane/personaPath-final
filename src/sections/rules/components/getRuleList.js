@@ -47,33 +47,35 @@ const RuleList = () => {
     }
   };
 
+  // const handleEditClick = (event, rule) => {
+  //   event.stopPropagation();
+  //   router.push(`/rules/editRule/${rule.id}?testId=${testId}`);
+  // };
+
   const handleEditClick = (event, rule, test) => {
     event.stopPropagation();
 
     const encodedData = btoa(encodeURIComponent(JSON.stringify(rule)));
-
+    //if testId changed route must change as well
     router.push(`/rules/editRule/${testId}?data=${encodedData}`);
   };
 
-  const handleDeleteClick = (event, rule, test) => {
+  const handleDeleteClick = (event, rule) => {
     event.stopPropagation();
     setSelectedElement(rule);
     setDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
-
     try {
       await deleteRule(selectedElement.id, testId);
 
       router.reload()
-
     } catch (error) {
       console.log("error while deleting rule");
     } finally {
       setDeleteDialogOpen(false);
     }
-
   };
 
   const handleDeleteCancel = () => {
@@ -81,9 +83,7 @@ const RuleList = () => {
   };
 
   const handleElementClick = (rule) => {
-    const encodedData = btoa(encodeURIComponent(JSON.stringify(rule)));
-
-    router.push(`/rules/details/${testId}?data=${encodedData}`);
+    router.push(`/rules/details/${rule.id}?testId=${testId}`);
   };
 
 

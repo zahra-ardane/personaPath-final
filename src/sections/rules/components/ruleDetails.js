@@ -4,16 +4,14 @@ import { Typography, Box, Divider } from '@mui/material';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-// import getRule from '../api/getRule';
+import getRule from '../api/getRule';
 
 const RuleDetails = () => {
   const router = useRouter();
-  const { testId, data } = router.query;
+  const { id, testId } = router.query;
 
   const [rule, setRule] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  // const [testData, setTestData] = useState(null);
 
   const getRuleTypeString = (type) => {
     switch (type) {
@@ -27,22 +25,21 @@ const RuleDetails = () => {
   };
 
   useEffect(() => {
-    if (data) {
+    const fetchData = async () => {
       try {
-        // Decode the base64-encoded data
-        const decodedData = atob(data);
-        // Parse the JSON string to get the question and test data
-        const rule = JSON.parse(decodeURIComponent(decodedData));
-
-        // Set the data to the state
+        const rule = await getRule(id, testId);
         setRule(rule);
-      } catch (error) {
-        console.error('Error decoding or parsing data:', error);
-      }
-    }
-  }, [data]);
 
-  // console.log("rule isssssssss ", rule);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error while fetching rule data', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id, testId]);
+
 
   return (
     <>

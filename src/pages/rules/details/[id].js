@@ -8,7 +8,9 @@ import RuleDetails from '../../../sections/rules/components/ruleDetails';
 const page = () => (
   <>
     <Head>
-      {/* Remove the title from here, it will be set dynamically in the addRule component */}
+      <title>
+        Rule's Details
+      </title>
     </Head>
     <Box
       component="main"
@@ -19,9 +21,6 @@ const page = () => (
     >
       <Container maxWidth="lg">
         <Stack spacing={3}>
-          <div>
-            {/* The title is now set dynamically in the addRule component */}
-          </div>
           <div>
             <RuleDetails />
           </div>

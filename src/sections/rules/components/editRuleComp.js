@@ -10,6 +10,7 @@ import { styled } from '@mui/system';
 import getTestById from '../../tests/api/getTestById';
 import getQuestions from '../../questions/api/getQuestions';
 import editRule from '../api/editRule'
+import getRule from '../api/getRule';
 
 const Container = styled('div')(({ theme }) => ({
   padding: theme.spacing(2),
@@ -18,6 +19,7 @@ const Container = styled('div')(({ theme }) => ({
 export const EditRule = () => {
 
   const router = useRouter();
+  // const { id, testId } = router.query;
   const { testId, data } = router.query;
 
   const [values, setValues] = useState({
@@ -41,6 +43,7 @@ export const EditRule = () => {
 
   const filteredQuestions = questions.filter((question) => question.type == 0 && question.level == values.levelQuestions);
 
+  //fetch test's question
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -53,13 +56,42 @@ export const EditRule = () => {
         // Both test and questions have been loaded, set isLoading to false
         setIsLoading(false);
       } catch (error) {
-        console.log('Error while fetching data', error);
-        setIsLoading(false); // Handle error and set isLoading to false
+        console.error('Error while fetching data', error);
+        setIsLoading(false);
       }
     };
 
     fetchData();
   }, [testId]);
+
+  // fetch rule
+  // useEffect(() => {
+  //   const fetchRuleData = async () => {
+  //     try {
+  //       const rule = await getRule(id, testId);
+
+  //       setConditions(rule.items);
+  //       setValues({
+  //         ...values,
+  //         report: rule.report,
+  //         type: rule.type,
+  //         levelQuestions: rule.levelQuestions
+  //       });
+
+  //       // Set the data to the state
+  //       setRule(rule);
+  //       setInitialData(rule);
+
+  //       // setIsLoading(false);
+  //     } catch (error) {
+  //       console.error('Error while fetching rule data', error);
+  //       // setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchRuleData();
+  // }, [id]);
+
 
   useEffect(() => {
     if (data) {
