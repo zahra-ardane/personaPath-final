@@ -21,7 +21,7 @@ const Page = () => (
         <Stack spacing={3}>
           <div>
             <Typography variant="h4">
-              Create your personality test questions here!
+              Create your test's questions here!
             </Typography>
           </div>
           <div>

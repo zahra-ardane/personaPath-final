@@ -3,33 +3,38 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Box, Paper, Button, Link, Divider } from '@mui/material';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import getQuestionById from '../api/getQuestionById';
+import getTestById from 'src/sections/tests/api/getTestById';
 
 const QuestionDetails = () => {
   const router = useRouter();
-  const { data } = router.query;
+  const { id, testId } = router.query;
 
   const [questionData, setQuestionData] = useState(null);
   const [testData, setTestData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
-    if (data) {
+    const fetchData = async () => {
       try {
-        // Decode the base64-encoded data
-        const decodedData = atob(data);
-        // Parse the JSON string to get the question and test data
-        const { question, test } = JSON.parse(decodeURIComponent(decodedData));
-
-        // Set the data to the state
+        const question = await getQuestionById(id);
         setQuestionData(question);
-        setTestData(test);
-      } catch (error) {
-        console.error('Error decoding or parsing data:', error);
-        // Handle error decoding or parsing data if needed
-      }
-    }
-  }, [data]);
 
-  if (!questionData || !testData) {
+        const test = await getTestById(testId);
+        setTestData(test);
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error while fetching quesiton and test data', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id, testId]);
+
+  if ((!questionData || !testData) && !isLoading) {
     // Handle case when data is not available
     return (
       <div>
@@ -43,9 +48,9 @@ const QuestionDetails = () => {
     <>
 
         <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: '#333', display: 'flex', alignItems: 'center' }}>
-            {testData.name}
+            {testData?.name}
             <Typography variant="h6" sx={{ ml: 1, fontWeight: 'bold', fontSize: '1.2rem', color: '#666' }}>
-                - {testData.level} levels
+                - {testData?.level} levels
             </Typography>
         </Typography>
 
@@ -63,29 +68,29 @@ const QuestionDetails = () => {
       </Box>
 
       <Typography variant="body1">
-        Level: {questionData.level}
+        Level: {questionData?.level}
       </Typography>
 
       <Typography variant="body1">
-        Type: {questionData.type == '0' ? 'Multiple Choice' : (questionData.type == '1' ? 'Descriptive' : 'Ranged')}
+        Type: {questionData?.type == '0' ? 'Multiple Choice' : (questionData?.type == '1' ? 'Descriptive' : 'Ranged')}
       </Typography>
 
-      {questionData.type == '0' && (
+      {questionData?.type == '0' && (
         <Typography variant="body1">
-          Number of answers user can choose: {questionData.answerCount}
+          Number of answers user can choose: {questionData?.answerCount}
         </Typography>
       )}
 
-      {questionData.options && questionData.options.length > 0 && (
+      {questionData?.options && questionData?.options?.length > 0 && (
         <>
           <Divider sx={{ my: 2 }} />
           <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
             Options:
           </Typography>
           <ul>
-            {questionData.options.map((option, index) => (
+            {questionData?.options?.map((option, index) => (
               <li key={index}>
-                {option.english} - {option.persian || 'Not available'}
+                {option?.english} - {option?.persian || 'Not available'}
               </li>
             ))}
           </ul>

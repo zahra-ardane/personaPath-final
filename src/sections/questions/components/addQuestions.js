@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import {
   Box,
@@ -10,9 +10,11 @@ import {
   Divider,
   TextField,
   Typography,
+  CircularProgress,
   Unstable_Grid2 as Grid
 } from '@mui/material';
 import postQuestion from '../api/postQuestion';
+import getTestById from 'src/sections/tests/api/getTestById';
 
 
 const questionTypes = [
@@ -37,24 +39,34 @@ export const AddQuestions = () => {
     englishText: '',
     persianText: '',
     answerCount: 1,
-    options: [], 
+    options: [],
   });
-  
+  const [test, setTest] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   const router = useRouter();
-  const { testData } = router.query;
+  const { testId } = router.query;
 
-  // Decode the base64-encoded data
-  const decodedData = atob(testData);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const test = await getTestById(testId);
+        setTest(test);
+        setIsLoading(false);
 
-  // Parse the JSON string to get the test object
-  const test = JSON.parse(decodeURIComponent(decodedData));
-  // Parse the test data from the query parameter
-  
+      } catch (error) {
+        console.error('Error while fetching test data', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [testId]);
 
   const handleChange = useCallback(
     (event) => {
       const { name, value } = event.target;
-  
+
       if (name === 'type') {
         // When the question type changes, reset options to an empty array
         setValues((prevState) => ({
@@ -62,7 +74,7 @@ export const AddQuestions = () => {
           type: value,
           options: [],
         }));
-        
+
         // Automatically add two options for multiple choice
         if (value === '0') {
           setValues((prevState) => ({
@@ -86,7 +98,7 @@ export const AddQuestions = () => {
           }
           return option;
         });
-  
+
         setValues((prevState) => ({
           ...prevState,
           options: updatedOptions,
@@ -100,7 +112,7 @@ export const AddQuestions = () => {
     },
     [values.type, values.options]
   );
-  
+
 
   const handleAddOption = () => {
     // Add two new empty options to the options array for multiple choice
@@ -109,7 +121,7 @@ export const AddQuestions = () => {
         ...prevState,
         options: [
           ...prevState.options,
-          { egnlish: '', persian: '' }        ],
+          { egnlish: '', persian: '' }],
       }));
     } else {
       // For other types, add a single empty option
@@ -122,7 +134,7 @@ export const AddQuestions = () => {
 
   const handleMultipleChoiceType = (event) => {
     const { value } = event.target;
-  
+
     // Handle changes based on the selected multiple-choice type
     switch (value) {
       case 'yesNo':
@@ -175,13 +187,10 @@ export const AddQuestions = () => {
       try {
         // Check if required fields are filled
         if (!values.englishText || !values.level) {
-          // You can provide user feedback here, e.g., show an error message
-          // console.error('Please fill in the required fields.');
           alert('Please fill in the required fields.');
           return;
         }
 
-        // Your submission logic goes here
         const questionData = {
           // englishText: values.englishText,
           // persianText: values.persianText,
@@ -200,242 +209,264 @@ export const AddQuestions = () => {
 
         // Navigate based on the button clicked
         if (event.target.innerText === 'Finish') {
-          // Go back to the test details page
-          const testData = JSON.stringify(test);
-          const encodedTestData = btoa(testData);
-      
-          router.push(`/test/${test.id}?data=${encodedTestData}`);
+          router.push(`/test/${test.id}`);
         } else if (event.target.innerText === 'Save & Add Another') {
           // Reload the current page to add another question
           router.reload();
         }
       } catch (error) {
         console.error('Error submitting the question:', error);
-        // Handle error feedback to the user if needed
       }
     },
     [values, test, router]
   );
 
   return (
-    <form
-      autoComplete="off"
-      noValidate
-      onSubmit={handleSubmit}
-    >
-      <Card>
-        <CardHeader
-          title={`Test ${test?.name}`}
-        />
-        <CardContent sx={{ pt: 0 }}>
-          <Box sx={{ m: -1.5 }}>
-            <Grid
-              container
-              spacing={3}
+    <>
+      {
+        !isLoading ?
+          <>
+            <form
+              autoComplete="off"
+              noValidate
+              onSubmit={handleSubmit}
             >
-            <Grid 
-            xs={12} 
-            md={12}
-            >
-              <TextField
-                fullWidth
-                label="English Title"
-                name="englishText"
-                onChange={handleChange}
-                multiline  
-                rows={4} 
-                required
-                value={values.englishText}
-              />
-            </Grid>
-            <Grid 
-            xs={12} 
-            md={12}
-            >
-              <TextField
-                fullWidth
-                label="Persian Title"
-                name="persianText"
-                onChange={handleChange}
-                multiline  
-                rows={4}  
-                value={values.persianText}
-              />
-            </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Question Level"
-                  name="level"
-                  onChange={handleChange}
-                  required
-                  select
-                  SelectProps={{ native: true }}
-                  value={values.level}
-                >
-                  {/* Dynamically generate options based on test levels */}
-                  {Array.from({ length: test.level }).map((_, index) => {
-                    const levelValue = test.level - index;
-                    return (
-                      <option key={levelValue} value={levelValue}>
-                        {`Level ${levelValue}`}
-                      </option>
-                    );
-                  })}
-                </TextField>
-
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Question Type"
-                  name="type"
-                  onChange={handleChange}
-                  required
-                  select
-                  SelectProps={{ native: true }}
-                  value={values.type}
-                >
-                  {questionTypes.map((option) => (
-                    <option
-                      key={option.value}
-                      value={option.value}
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </TextField>
-              </Grid>
-
-              <Grid
-                xs={12}
-                md={12}
-              >
-                {/* Radio buttons for multiple-choice options */}
-                {values.type == '0' && (
-
-                  <div>
-                    <Typography variant="body1" sx={{ color: '#777', mb: 1 }}>
-                      Multiple Choice Type:
-                    </Typography>
-                    <div>
-                      <label>
-                        <input
-                          type="radio"
-                          name="multipleChoiceType"
-                          value="yesNo"
-                          onChange={handleMultipleChoiceType}
-                        />
-                        Yes/No
-                      </label>
-                    </div>
-                    <div>
-                      <label>
-                        <input
-                          type="radio"
-                          name="multipleChoiceType"
-                          value="agreeDisagreeNeutral"
-                          onChange={handleMultipleChoiceType}
-                        />
-                        Agree/Disagree/Neutral
-                      </label>
-                    </div>
-                    <div>
-                      <label>
-                        <input
-                          type="radio"
-                          name="multipleChoiceType"
-                          value="completelyDisagreeAgree"
-                          onChange={handleMultipleChoiceType}
-                        />
-                        Completely Disagree/Disagree/Neutral/Agree/Completely Agree
-                      </label>
-                    </div>
-                  </div>
-                )}
-              </Grid>
-
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <TextField
-                  fullWidth
-                  label="Number of Answers"
-                  name="answerCount"
-                  onChange={handleChange}
-                  type="number"
-                  value={values.answerCount}
-                  helperText="Number of answers user can choose"
-                  style={{ display: values.type === '0' ? 'block' : 'none' }}
+              <Card>
+                <CardHeader
+                  title={`${test?.name}`}
                 />
-              </Grid>
-              
-              {/* Add Option Button */}
-              <Grid
-                xs={12}
-                md={6}
-              >
-                <Button variant="contained" onClick={handleAddOption} style={{ display: values.type === '0' ? 'block' : 'none' }}>
-                  Add Option
-                </Button>
-              </Grid>
-              
-              {/* Render Options */}
-              {values.options.map((option, index) => (
-                <>
-                  <Grid
-                    key={`${index}-english`}
-                    xs={12}
-                    md={6}
-                  >
-                    <TextField
-                      fullWidth
-                      label={`Option ${index + 1} - English`}
-                      name={`option${index + 1}-english`}
-                      onChange={handleChange}
-                      value={option.english}
-                      style={{ display: values.type === '0' ? 'block' : 'none' }}
-                    />
-                  </Grid>
-                  <Grid
-                    key={`${index}-persian`}
-                    xs={12}
-                    md={6}
-                  >
-                    <TextField
-                      fullWidth
-                      label={`Option ${index + 1} - Persian`}
-                      name={`option${index + 1}-persian`}
-                      onChange={handleChange}
-                      value={option.persian}
-                      style={{ display: values.type === '0' ? 'block' : 'none' }}
-                    />
-                  </Grid>
-                </>
+                <CardContent sx={{ pt: 0 }}>
+                  <Box sx={{ m: -1.5 }}>
+                    <Grid
+                      container
+                      spacing={3}
+                    >
+                      <Grid
+                        xs={12}
+                        md={12}
+                      >
+                        <TextField
+                          fullWidth
+                          label="English Title"
+                          name="englishText"
+                          onChange={handleChange}
+                          multiline
+                          rows={4}
+                          required
+                          value={values.englishText}
+                        />
+                      </Grid>
+                      <Grid
+                        xs={12}
+                        md={12}
+                      >
+                        <TextField
+                          fullWidth
+                          label="Persian Title"
+                          name="persianText"
+                          onChange={handleChange}
+                          multiline
+                          rows={4}
+                          value={values.persianText}
+                        />
+                      </Grid>
+                      <Grid
+                        xs={12}
+                        md={6}
+                      >
+                        <TextField
+                          fullWidth
+                          label="Question Level"
+                          name="level"
+                          onChange={handleChange}
+                          required
+                          select
+                          SelectProps={{ native: true }}
+                          value={values.level}
+                        >
+                          {/* Dynamically generate options based on test levels */}
+                          {Array.from({ length: test?.level }).map((_, index) => {
+                            const levelValue = test?.level - index;
+                            return (
+                              <option key={levelValue} value={levelValue}>
+                                {`Level ${levelValue}`}
+                              </option>
+                            );
+                          })}
+                        </TextField>
 
-                
-              ))}
+                      </Grid>
+                      <Grid
+                        xs={12}
+                        md={6}
+                      >
+                        <TextField
+                          fullWidth
+                          label="Question Type"
+                          name="type"
+                          onChange={handleChange}
+                          required
+                          select
+                          SelectProps={{ native: true }}
+                          value={values.type}
+                        >
+                          {questionTypes.map((option) => (
+                            <option
+                              key={option.value}
+                              value={option.value}
+                            >
+                              {option.label}
+                            </option>
+                          ))}
+                        </TextField>
+                      </Grid>
 
-            </Grid>
-          </Box>
-        </CardContent>
-        <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained" onClick={handleSubmit}>
-            Finish
-          </Button>
-          <Button variant="contained" onClick={handleSubmit}>
-            Save & Add Another
-          </Button>
-        </CardActions>
-      </Card>
-    </form>
+                      <Grid
+                        xs={12}
+                        md={12}
+                      >
+                        {/* Radio buttons for multiple-choice options */}
+                        {values.type == '0' && (
+
+                          <div>
+                            <Typography variant="body1" sx={{ color: '#777', mb: 1 }}>
+                              Multiple Choice Type:
+                            </Typography>
+                            <div>
+                              <label>
+                                <input
+                                  type="radio"
+                                  name="multipleChoiceType"
+                                  value="yesNo"
+                                  onChange={handleMultipleChoiceType}
+                                />
+                                Yes/No
+                              </label>
+                            </div>
+                            <div>
+                              <label>
+                                <input
+                                  type="radio"
+                                  name="multipleChoiceType"
+                                  value="agreeDisagreeNeutral"
+                                  onChange={handleMultipleChoiceType}
+                                />
+                                Agree/Disagree/Neutral
+                              </label>
+                            </div>
+                            <div>
+                              <label>
+                                <input
+                                  type="radio"
+                                  name="multipleChoiceType"
+                                  value="completelyDisagreeAgree"
+                                  onChange={handleMultipleChoiceType}
+                                />
+                                Completely Disagree/Disagree/Neutral/Agree/Completely Agree
+                              </label>
+                            </div>
+                          </div>
+                        )}
+                      </Grid>
+
+                      <Grid
+                        xs={12}
+                        md={6}
+                      >
+                        <TextField
+                          fullWidth
+                          label="Number of Answers"
+                          name="answerCount"
+                          onChange={handleChange}
+                          type="number"
+                          value={values.answerCount}
+                          helperText="Number of answers user can choose"
+                          style={{ display: values.type === '0' ? 'block' : 'none' }}
+                        />
+                      </Grid>
+
+                      {/* Add Option Button */}
+                      <Grid
+                        xs={12}
+                        md={6}
+                      >
+                        <Button variant="contained" onClick={handleAddOption} style={{ display: values.type === '0' ? 'block' : 'none' }}>
+                          Add Option
+                        </Button>
+                      </Grid>
+
+                      {/* Render Options */}
+                      {values.options.map((option, index) => (
+                        <>
+                          <Grid
+                            key={`${index}-english`}
+                            xs={12}
+                            md={6}
+                          >
+                            <TextField
+                              fullWidth
+                              label={`Option ${index + 1} - English`}
+                              name={`option${index + 1}-english`}
+                              onChange={handleChange}
+                              value={option.english}
+                              style={{ display: values.type === '0' ? 'block' : 'none' }}
+                            />
+                          </Grid>
+                          <Grid
+                            key={`${index}-persian`}
+                            xs={12}
+                            md={6}
+                          >
+                            <TextField
+                              fullWidth
+                              label={`Option ${index + 1} - Persian`}
+                              name={`option${index + 1}-persian`}
+                              onChange={handleChange}
+                              value={option.persian}
+                              style={{ display: values.type === '0' ? 'block' : 'none' }}
+                            />
+                          </Grid>
+                        </>
+
+
+                      ))}
+
+                    </Grid>
+                  </Box>
+                </CardContent>
+                <Divider />
+                <CardActions sx={{ justifyContent: 'flex-end' }}>
+                  <Button variant="contained" onClick={handleSubmit}>
+                    Finish
+                  </Button>
+                  <Button variant="contained" onClick={handleSubmit}>
+                    Save & Add Another
+                  </Button>
+                </CardActions>
+              </Card>
+            </form>
+
+          </>
+
+          : (
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              height="100%"
+            >
+              <Typography variant="h5" gutterBottom>
+                Loading
+              </Typography>
+              <CircularProgress />
+            </Box>
+          )
+      }
+
+    </>
   );
+
+
+
 };

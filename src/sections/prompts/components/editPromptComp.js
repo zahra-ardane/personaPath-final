@@ -56,12 +56,7 @@ export const EditPrompt = () => {
 
         await editPrompt(values.id, data);
 
-        // Navigate to different routes based on the button clicked
-        // if (event.target.innerText === 'Finish') {
         router.push('/prompts/promptList');
-        // } else if (event.target.innerText === 'Add Questions') {
-        //   router.push('/questions/addQuestion/[id]', `/questions/addQuestion/${values.id}`);
-        // }
       } catch (error) {
         console.error('Error submitting prompt:', error);
       }

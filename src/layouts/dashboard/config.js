@@ -19,15 +19,15 @@ export const items = [
       </SvgIcon>
     )
   },
-  {
-    title: 'Add Test',
-    path: '/test/addTest',
-    icon: (
-      <SvgIcon fontSize="small">
-        <PlusCircleIcon />
-      </SvgIcon>
-    )
-  },
+  // {
+  //   title: 'Add Test',
+  //   path: '/test/addTest',
+  //   icon: (
+  //     <SvgIcon fontSize="small">
+  //       <PlusCircleIcon />
+  //     </SvgIcon>
+  //   )
+  // },
   {
     title: 'Prompts',
     path: '/prompts/promptList',

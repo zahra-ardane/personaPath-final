@@ -83,7 +83,7 @@ export const WorkflowList = () => {
   return (
     <>
       <Head>
-        <title>Woekflows</title>
+        <title>Workflows</title>
       </Head>
       <Box
         component="main"

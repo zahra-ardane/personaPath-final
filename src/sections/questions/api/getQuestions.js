@@ -20,5 +20,3 @@ const getQuestions = async (testId) => {
 export default getQuestions;
 
 
-
-// im not sure uf the locaiton of this file is right, maybe its better to move it to questions folder, think about this

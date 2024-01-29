@@ -8,8 +8,10 @@ import TestDetails from '../../sections/tests/components/testDetails';
 const TestDetailsPage = () => (
   <>
     <Head>
-      {/* Remove the title from here, it will be set dynamically in the TestDetails component */}
-    </Head>
+      <title>
+        Test Details
+      </title>    
+      </Head>
     <Box
       component="main"
       sx={{

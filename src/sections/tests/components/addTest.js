@@ -45,7 +45,6 @@ export const AddTest = () => {
           return;
         }
   
-        // Your submission logic goes here
         const testData = {
           name: values.testName,
           level: values.levels,
@@ -55,19 +54,14 @@ export const AddTest = () => {
         // Call the API to post the test data
         const createdTest = await postTest(testData);
   
-        // Encode the createdTest object
-        const encodedTest = btoa(JSON.stringify(createdTest));
-  
         // Navigate to different routes based on the button clicked
         if (event.target.innerText === 'Finish') {
           router.push('/');
         } else if (event.target.innerText === 'Add Questions') {
-          // Pass the encoded test data as a route parameter
-          router.push('/questions/addQuestion/[testId]', `/questions/addQuestion/${createdTest.id}?testData=${encodeURIComponent(encodedTest)}`);
+          router.push(`/questions/addQuestion/${createdTest?.id}`);
         }
       } catch (error) {
         console.error('Error submitting the test:', error);
-        // Handle error feedback to the user if needed
       }
     },
     [values, router]
@@ -82,7 +76,7 @@ export const AddTest = () => {
     >
       <Card>
         <CardHeader
-          title="Personality Test"
+          title="Test Information"
         />
         <CardContent sx={{ pt: 0 }}>
           <Box sx={{ m: -1.5 }}>

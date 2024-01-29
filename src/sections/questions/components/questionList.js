@@ -1,7 +1,6 @@
 // components/QuestionList.js
 import React, { useState } from 'react';
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import NextLink from 'next/link';
 import DeleteQuestionDialog from './DeleteQuestionDialog';
 import deleteQuestion from '../api/deleteQuestion'
 import { useRouter } from 'next/router';
@@ -26,15 +25,7 @@ const QuestionList = ({ questions, test }) => {
 
   const handleEditClick = (event, question, test) => {
     event.stopPropagation();
-
-    const tempData = {
-      question,
-      test
-    }
-
-    const encodedQuestionData = btoa(encodeURIComponent(JSON.stringify(tempData)));
-
-    router.push(`/questions/editQuestion?data=${encodedQuestionData}`);
+    router.push(`/questions/editQuestion/${question.id}?testId=${test.id}`);
   };
 
   const handleDeleteClick = (event, question, test) => {
@@ -44,37 +35,26 @@ const QuestionList = ({ questions, test }) => {
   };
 
   const handleDeleteConfirm = async () => {
-
     try {
       await deleteQuestion(selectedQuestion.id);
 
       router.reload()
-
     } catch (error) {
-      // Handle error
+      console.error("error deleting data", error);
     } finally {
       // Close the delete confirmation dialog
       setDeleteDialogOpen(false);
     }
-
   };
 
   const handleDeleteCancel = () => {
     setDeleteDialogOpen(false);
   };
 
+  // open question's details page
   const handleQuestionClick = (question) => {
-
-    const tempData = {
-      question,
-      test
-    }
-
-    const encodedQuestionData = btoa(encodeURIComponent(JSON.stringify(tempData)));
-
-    router.push(`/questions/details?data=${encodedQuestionData}`);
+    router.push(`/questions/details/${question?.id}?testId=${test?.id}`);
   };
-
 
 
   return (

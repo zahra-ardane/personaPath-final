@@ -13,7 +13,10 @@ import {
   Typography,
   Unstable_Grid2 as Grid
 } from '@mui/material';
+
 import editQuestion from '../api/editQuestion';
+import getQuestionById from '../api/getQuestionById';
+import getTestById from 'src/sections/tests/api/getTestById';
 
 
 const questionTypes = [
@@ -35,35 +38,30 @@ export const EditQuestion = () => {
 
   const [values, setValues] = useState(null);
   const [test, setTest] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+
   const router = useRouter();
-  const { data } = router.query;
+  const { id, testId } = router.query;
 
   useEffect(() => {
-    if (data) {
-      // Decode the base64-encoded data
-      const decodedData = atob(data);
+    const fetchData = async () => {
+      try {
+        const question = await getQuestionById(id);
+        setValues(question);
 
-      // Parse the JSON string to get the test object
-      const propsData = JSON.parse(decodeURIComponent(decodedData));
-      // Parse the test data from the query parameter
-      setValues(propsData.question);
-       // Transform options format
-      // const transformedOptions = propsData.question.options.map((option) => ({
-      //   english: option.optionText.English || '',
-      //   persianOptionText: option.optionText.Persian || '',
-      // }));
+        const test = await getTestById(testId);
+        setTest(test);
 
-      // setValues((prevValues) => ({
-      //   ...prevValues,
-      //   englishText: propsData.question.questionText.English || '',
-      //   persianText: propsData.question.questionText.Persian || '',
-      //   options: transformedOptions,
-      // }));
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error while fetching quesiton and test data', error);
+        setIsLoading(false);
+      }
+    };
 
-      setTest(propsData.test);
-
-    }
-  }, [data]);
+    fetchData();
+  }, [id, testId]);
   
 
   const handleChange = useCallback(
@@ -200,13 +198,10 @@ export const EditQuestion = () => {
       try {
         // Check if required fields are filled
         if (!values?.questionText?.english || !values?.level ) {
-          // You can provide user feedback here, e.g., show an error message
-          // console.error('Please fill in the required fields.');
           alert('Please fill in the required fields.');
           return;
         }
 
-        // Your submission logic goes here
         const questionData = {
           // englishText: values.englishText,
           // persianText: values.persianText,
@@ -220,23 +215,13 @@ export const EditQuestion = () => {
         // Call the API to post the question data
         const apiResponse = await editQuestion(values.id,questionData);
 
-
         // Navigate based on the button clicked
         if (event.target.innerText === 'Finish') {
-          // Go back to the test details page
-          const testData = JSON.stringify(test);
-          const encodedTestData = btoa(testData);
-      
-          router.push(`/test/${test.id}?data=${encodedTestData}`);
+          router.push(`/test/${test.id}`);
         } 
-        // else if (event.target.innerText === 'Save & Add Another') {
-        //   console.log("n save");
-        //   // Reload the current page to add another question
-        //   router.reload();
-        // }
+
       } catch (error) {
         console.error('Error submitting the question:', error);
-        // Handle error feedback to the user if needed
       }
     },
     [values, test, router]
@@ -251,7 +236,7 @@ export const EditQuestion = () => {
     >
       <Card>
         <CardHeader
-          title={`Test ${test?.name}`}
+          title={`${test?.name}`}
         />
         {values ? (
           <CardContent sx={{ pt: 0 }}>
@@ -301,11 +286,11 @@ export const EditQuestion = () => {
                     required
                     select
                     SelectProps={{ native: true }}
-                    value={values.level}
+                    value={values?.level}
                   >
                     {/* Dynamically generate options based on test levels */}
-                    {Array.from({ length: test.level }).map((_, index) => {
-                      const levelValue = test.level - index;
+                    {Array.from({ length: test?.level }).map((_, index) => {
+                      const levelValue = test?.level - index;
                       return (
                         <option key={levelValue} value={levelValue}>
                           {`Level ${levelValue}`}
@@ -327,7 +312,7 @@ export const EditQuestion = () => {
                     required
                     select
                     SelectProps={{ native: true }}
-                    value={values.type}
+                    value={values?.type}
                   >
                     {questionTypes.map((option) => (
                       <option
@@ -345,7 +330,7 @@ export const EditQuestion = () => {
                   md={12}
                 >
                   {/* Radio buttons for multiple-choice options */}
-                  {values.type == '0' && (
+                  {values?.type == '0' && (
                     <div>
                       <Typography variant="body1" sx={{ color: '#777', mb: 1 }}>
                         Multiple Choice Type:
@@ -397,9 +382,9 @@ export const EditQuestion = () => {
                     name="answerCount"
                     onChange={handleChange}
                     type="number"
-                    value={values.answerCount}
+                    value={values?.answerCount}
                     helperText="Number of answers user can choose"
-                    style={{ display: values.type == '0' ? 'block' : 'none' }}
+                    style={{ display: values?.type == '0' ? 'block' : 'none' }}
                   />
                 </Grid>
                 {/* Add Option Button */}
@@ -407,13 +392,13 @@ export const EditQuestion = () => {
                   xs={12}
                   md={6}
                 >
-                  <Button variant="contained" onClick={handleAddOption} style={{ display: values.type == '0' ? 'block' : 'none' }}>
+                  <Button variant="contained" onClick={handleAddOption} style={{ display: values?.type == '0' ? 'block' : 'none' }}>
                     Add Option
                   </Button>
                 </Grid>
                 
                 {/* Render Options */}
-                {values.options.map((option, index) => (
+                {values?.options?.map((option, index) => (
                   <>
                     <Grid
                       key={`${index}-english`}
@@ -425,8 +410,8 @@ export const EditQuestion = () => {
                         label={`Option ${index + 1} - English`}
                         name={`option${index + 1}-english`}
                         onChange={handleChange}
-                        value={option.english}
-                        style={{ display: values.type == '0' ? 'block' : 'none' }}
+                        value={option?.english}
+                        style={{ display: values?.type == '0' ? 'block' : 'none' }}
                       />
                     </Grid>
                     <Grid
@@ -439,13 +424,12 @@ export const EditQuestion = () => {
                         label={`Option ${index + 1} - Persian`}
                         name={`option${index + 1}-persian`}
                         onChange={handleChange}
-                        value={option.persian}
-                        style={{ display: values.type == '0' ? 'block' : 'none' }}
+                        value={option?.persian}
+                        style={{ display: values?.type == '0' ? 'block' : 'none' }}
                       />
                     </Grid>
                   </>
 
-                  
                 ))}
 
               </Grid>
@@ -461,9 +445,6 @@ export const EditQuestion = () => {
           <Button variant="contained" onClick={handleSubmit}>
             Finish
           </Button>
-          {/* <Button variant="contained" onClick={handleSubmit}>
-            Save & Add Another
-          </Button> */}
         </CardActions>
       </Card>
     </form>

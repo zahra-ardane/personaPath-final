@@ -1,13 +1,13 @@
 import Head from 'next/head';
 import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { EditQuestion } from '../../sections/questions/components/editQuestion'
+import { EditQuestion } from '../../../sections/questions/components/editQuestion'
 
 const Page = () => (
   <>
     <Head>
       <title>
-        Edit test
+        Edit Question
       </title>
     </Head>
     <Box
@@ -21,7 +21,7 @@ const Page = () => (
         <Stack spacing={3}>
           <div>
             <Typography variant="h4">
-              Edit your personality test question here!
+              Edit your test's question here!
             </Typography>
           </div>
           <div>

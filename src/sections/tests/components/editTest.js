@@ -13,28 +13,28 @@ import {
   Unstable_Grid2 as Grid
 } from '@mui/material';
 import editTest from '../api/editTest';
+import getTestById from '../api/getTestById';
 
 export const EditTest = () => {
   const [values, setValues] = useState(null);
 
-  useEffect(() => {
-    // Get the test data from the URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const encodedTestData = urlParams.get('data');
-
-    if (encodedTestData) {
-      // Decode the base64 string to a JSON string
-      const testData = atob(encodedTestData);
-
-      // Parse the JSON string into an object
-      const test = JSON.parse(testData);
-
-      // Store the test data in the testData state variable
-      setValues(test);
-    }
-  }, []);
-
   const router = useRouter();
+  const { id } = router.query;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const test = await getTestById(id);
+        setValues(test);
+
+      } catch (error) {
+        console.log('Error while fetching test data', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const handleChange = useCallback((event) => {
     const { name, value } = event.target;
@@ -50,28 +50,25 @@ export const EditTest = () => {
       event.preventDefault();
 
       try {
-        // Your submission logic goes here
         const testData = {
           id: values.id,
           name: values.name,
-          // levels: values.levels,
-          //change back later
           level: values.level,
           about: values.about,
         };
 
-        // Call the API to post the test data
+        // Call the API to edit the test data
         await editTest(testData);
 
         // Navigate to different routes based on the button clicked
         if (event.target.innerText === 'Finish') {
           router.push('/');
-        } else if (event.target.innerText === 'Add Questions') {
-          router.push('/questions/addQuestion/[id]', `/questions/addQuestion/${values.id}`);
-        }
+        } 
+        // else if (event.target.innerText === 'Edit Questions') {
+        //   router.push('/questions/editQuestion/[id]', `/questions/editQuestion/${values.id}`);
+        // }
       } catch (error) {
-        console.error('Error submitting the test:', error);
-        // Handle error feedback to the user if needed
+        console.error('Error editing the test:', error);
       }
     },
     [values, router]
@@ -85,7 +82,7 @@ export const EditTest = () => {
     >
       <Card>
         <CardHeader
-          title="Personality Test"
+          title="Test Information"
         />
         {values ? (
           <CardContent sx={{ pt: 0 }}>

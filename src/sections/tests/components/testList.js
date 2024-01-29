@@ -16,7 +16,6 @@ import {
   Paper,
   Link,
 } from '@mui/material';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import getTestList from '../api/getTestList';
@@ -36,9 +35,8 @@ export const TestList = () => {
         const tests = await getTestList();
         setTestList(tests);
       } catch (error) {
-        // Handle error
+        console.error("Error fetching test list", error);
       } finally {
-        // Set loading to false once the data is fetched
         setIsLoading(false);
       }
     };
@@ -50,24 +48,17 @@ export const TestList = () => {
     // Stop event propagation to prevent the row click event
     event.stopPropagation();
 
-    // Convert the test object to a JSON string
-    const testData = JSON.stringify(test);
-    // Encode the JSON string to base64
-    const encodedTestData = btoa(testData);
-
-    router.push(`/test/editTest?data=${encodedTestData}`);
+    router.push(`/test/editTest/${test?.id}`);
   };
 
   const handleAddRuleClick = (event, test) => {
     event.stopPropagation();
+
     router.push(`/rules/addRule/${test.id}`);
   };
 
   const handleTestClick = (test) => {
-    const testData = JSON.stringify(test);
-    const encodedTestData = btoa(encodeURIComponent(testData));
-
-    router.push(`/test/${test.id}?data=${encodedTestData}`);
+    router.push(`/test/${test.id}`);
   };
   
 
@@ -79,12 +70,12 @@ export const TestList = () => {
 
   const handleDeleteConfirm = async () => {
     try {
-      await deleteTest(selectedTest.id); // Pass the test ID for deletion
+      await deleteTest(selectedTest.id); // Pass the test Id for deletion
 
       const tests = await getTestList();
       setTestList(tests);
     } catch (error) {
-      // Handle error
+      console.error("error deleting test", error);
     } finally {
       // Close the delete confirmation dialog
       setDeleteDialogOpen(false);
