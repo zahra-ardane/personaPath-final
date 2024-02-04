@@ -50,19 +50,11 @@ export const PromptList = () => {
     // Stop event propagation to prevent the row click event
     event.stopPropagation();
 
-    // Convert the prompt object to a JSON string
-    const promptData = JSON.stringify(prompt);
-    // Encode the JSON string to base64
-    const encodedPromptData = btoa(promptData);
-
-    router.push(`/prompts/editPrompt?data=${encodedPromptData}`);
+    router.push(`/prompts/editPrompt/${prompt.id}`);
   };
 
   const handlePromptClick = (prompt) => {
-    const promptData = JSON.stringify(prompt);
-    const encodedPromptData = btoa(promptData);
-
-    router.push(`/prompts/${prompt.id}?data=${encodedPromptData}`);
+    router.push(`/prompts/details/${prompt.id}`);
   };
   
 

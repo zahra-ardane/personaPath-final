@@ -12,27 +12,33 @@ import {
   CircularProgress,
   Unstable_Grid2 as Grid
 } from '@mui/material';
+
 import editPrompt from '../api/editPrompt';
+import getPromptById from '../api/getPromptById';
 
 export const EditPrompt = () => {
-  const [values, setValues] = useState(null);
-
-  useEffect(() => {
-    // Get the prompt data from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const encodedPromptData = urlParams.get('data');
-
-    if (encodedPromptData) {
-      // Decode the base64 string to a JSON string
-      const promptData = atob(encodedPromptData);
-      // Parse the JSON string into an object
-      const prompt = JSON.parse(promptData);
-      // Store the prompt data in state variable
-      setValues(prompt);
-    }
-  }, []);
 
   const router = useRouter();
+  const { id } = router.query;
+
+  const [values, setValues] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const prompt = await getPromptById(id);
+        setValues(prompt);
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error while fetching prompt data', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const handleChange = useCallback((event) => {
     const { name, value } = event.target;
@@ -56,77 +62,84 @@ export const EditPrompt = () => {
 
         await editPrompt(values.id, data);
 
-        router.push('/prompts/promptList');
+        router.reload();
+        // router.push('/prompts/promptList');
       } catch (error) {
-        console.error('Error submitting prompt:', error);
+        console.error('Error editting prompt:', error);
       }
     },
     [values, router]
   );
 
   return (
-    <form
-      autoComplete="off"
-      noValidate
-      onSubmit={handleSubmit}
-    >
-      <Card>
-        <CardHeader
-          title="Edit Prompt"
-        />
-        {values ? (
-          <CardContent sx={{ pt: 0 }}>
-            <Box sx={{ m: -1.5 }}>
-              <Grid
-                container
-                spacing={3}
-              >
-                <Grid
-                  xs={12}
-                  md={6}
-                >
-                  <TextField
-                    fullWidth
-                    label="Title"
-                    name="title"
-                    onChange={handleChange}
-                    required
-                    value={values.title}
-                  />
-                </Grid>
-                <Grid
-                  xs={12}
-                  md={12}
-                >
-                  <TextField
-                    fullWidth
-                    label="Text"
-                    name="text"
-                    onChange={handleChange}
-                    multiline
-                    required
-                    rows={8}
-                    value={values.text}
-                  />
-                </Grid>
-              </Grid>
-            </Box>
-          </CardContent>
-        ) : (
-          <CardContent>
-            <CircularProgress />
-          </CardContent>
-        )}
-        <Divider />
-        <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained" onClick={handleSubmit}>
-            Finish
-          </Button>
-          {/* <Button variant="contained" onClick={handleSubmit}>
-            Edit Questions
-          </Button> */}
-        </CardActions>
-      </Card>
-    </form>
+    <>
+      {!isLoading ? (
+        <form
+          autoComplete="off"
+          noValidate
+          onSubmit={handleSubmit}
+        >
+          <Card>
+            <CardHeader
+              title="Edit Prompt"
+            />
+            {values ? (
+              <CardContent sx={{ pt: 0 }}>
+                <Box sx={{ m: -1.5 }}>
+                  <Grid
+                    container
+                    spacing={3}
+                  >
+                    <Grid
+                      xs={12}
+                      md={6}
+                    >
+                      <TextField
+                        fullWidth
+                        label="Title"
+                        name="title"
+                        onChange={handleChange}
+                        required
+                        value={values?.title}
+                      />
+                    </Grid>
+                    <Grid
+                      xs={12}
+                      md={12}
+                    >
+                      <TextField
+                        fullWidth
+                        label="Text"
+                        name="text"
+                        onChange={handleChange}
+                        multiline
+                        required
+                        rows={8}
+                        value={values?.text}
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+              </CardContent>
+            ) : (
+              <CardContent>
+                <CircularProgress />
+              </CardContent>
+            )}
+            <Divider />
+            <CardActions sx={{ justifyContent: 'flex-end' }}>
+              <Button variant="contained" onClick={handleSubmit}>
+                Finish
+              </Button>
+            </CardActions>
+          </Card>
+        </form>
+      ) : (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
+          <CircularProgress />
+        </Box>
+      )}
+    </>
   );
-};
+
+}

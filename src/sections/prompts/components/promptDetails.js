@@ -3,28 +3,33 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Box, Divider } from '@mui/material';
 import { useRouter } from 'next/router';
 
+import getPromptById from '../api/getPromptById';
+
 const PromptDetails = () => {
   const router = useRouter();
-  const { data } = router.query;
+  const { id } = router.query;
 
   const [prompt, setPrompt] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (data) {
+    const fetchData = async () => {
       try {
-        // Decode the base64-encoded data
-        const decodedData = atob(data);
-        // Parse the JSON string to get the prompt data
-        const prompt = JSON.parse(decodeURIComponent(decodedData));
-
+        const prompt = await getPromptById(id);
         setPrompt(prompt);
-      } catch (error) {
-        console.error('Error decoding or parsing data:', error);
-      }
-    }
-  }, [data]);
 
-  if (!prompt) {
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error while fetching prompt data', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+
+  if (!prompt && !isLoading) {
     return (
       <div>
         Data not found.
@@ -37,7 +42,7 @@ const PromptDetails = () => {
     <>
 
       <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-        {prompt.title}
+        {prompt?.title}
       </Typography>
 
       <Divider sx={{ my: 2 }} />
@@ -46,7 +51,7 @@ const PromptDetails = () => {
         Text: 
       </Typography>
       <Typography sx={{ mb: 2}}>
-        {prompt.text}
+        {prompt?.text}
       </Typography>
 
     </>
