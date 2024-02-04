@@ -25,7 +25,7 @@ const Page = () => {
   const [method, setMethod] = useState('email');
   const formik = useFormik({
     initialValues: {
-      email: 'demo@devias.io',
+      email: 'demo@gmail.com',
       password: 'Password123!',
       submit: null
     },
@@ -99,7 +99,7 @@ const Page = () => {
               <Typography variant="h4">
                 Login
               </Typography>
-              <Typography
+              {/* <Typography
                 color="text.secondary"
                 variant="body2"
               >
@@ -113,7 +113,7 @@ const Page = () => {
                 >
                   Register
                 </Link>
-              </Typography>
+              </Typography> */}
             </Stack>
             <Tabs
               onChange={handleMethodChange}
