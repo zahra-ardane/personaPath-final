@@ -47,25 +47,30 @@ const QuestionDetails = () => {
   return (
     <>
 
-        <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: '#333', display: 'flex', alignItems: 'center' }}>
-            {testData?.name}
-            <Typography variant="h6" sx={{ ml: 1, fontWeight: 'bold', fontSize: '1.2rem', color: '#666' }}>
-                - {testData?.level} levels
-            </Typography>
+      <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold', color: '#333', display: 'flex', alignItems: 'center' }}>
+        {testData?.name}
+        <Typography variant="h6" sx={{ ml: 1, fontWeight: 'bold', fontSize: '1.2rem', color: '#666' }}>
+          - {testData?.level} levels
         </Typography>
+      </Typography>
 
       <Divider sx={{ my: 2 }} />
 
-
-      <Typography sx={{ mb: 2}}>
-        English Title: {questionData?.questionText?.english}
+      {/* english title */}
+      <Typography sx={{ mb: 1, fontWeight: "bold" }}>
+        English Title:
+      </Typography>
+      <Typography sx={{ mb: 2 }}>
+        {questionData?.questionText?.english}
       </Typography>
 
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="body1">
-          Persian Title: {questionData?.questionText?.persian || ''}
-        </Typography>
-      </Box>
+      {/* persian title */}
+      <Typography sx={{ mb: 1, fontWeight: "bold" }}>
+        Persian Title:
+      </Typography>
+      <Typography sx={{ mb: 2 }}>
+        {questionData?.questionText?.persian || ''}
+      </Typography>
 
       <Typography variant="body1">
         Level: {questionData?.level}
@@ -84,7 +89,7 @@ const QuestionDetails = () => {
       {questionData?.options && questionData?.options?.length > 0 && (
         <>
           <Divider sx={{ my: 2 }} />
-          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+          <Typography sx={{ fontWeight: 'bold', mb: 2 }}>
             Options:
           </Typography>
           <ul>
