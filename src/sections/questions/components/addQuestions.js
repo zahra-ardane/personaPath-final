@@ -11,8 +11,16 @@ import {
   TextField,
   Typography,
   CircularProgress,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Unstable_Grid2 as Grid
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 import postQuestion from '../api/postQuestion';
 import getTestById from 'src/sections/tests/api/getTestById';
 
@@ -43,6 +51,8 @@ export const AddQuestions = () => {
   });
   const [test, setTest] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [multipleChoiceType, setMultipleChoiceType] = useState('');
+  const [expanded, setExpanded] = useState(false);
 
   const router = useRouter();
   const { testId } = router.query;
@@ -62,6 +72,10 @@ export const AddQuestions = () => {
 
     fetchData();
   }, [testId]);
+
+  const handleAccordionChange = () => {
+    setExpanded(!expanded);
+  };
 
   const handleChange = useCallback(
     (event) => {
@@ -177,6 +191,8 @@ export const AddQuestions = () => {
           ],
         }));
     }
+
+    setMultipleChoiceType(value);
   };
 
 
@@ -220,6 +236,8 @@ export const AddQuestions = () => {
     },
     [values, test, router]
   );
+
+  console.log("this is multipleChoiceType ", multipleChoiceType);
 
   return (
     <>
@@ -321,51 +339,47 @@ export const AddQuestions = () => {
                         </TextField>
                       </Grid>
 
-                      <Grid
-                        xs={12}
-                        md={12}
-                      >
+                      <Grid xs={12} md={12}>
                         {/* Radio buttons for multiple-choice options */}
                         {values.type == '0' && (
-
-                          <div>
-                            <Typography variant="body1" sx={{ color: '#777', mb: 1 }}>
-                              Multiple Choice Type:
-                            </Typography>
-                            <div>
-                              <label>
-                                <input
-                                  type="radio"
-                                  name="multipleChoiceType"
-                                  value="yesNo"
-                                  onChange={handleMultipleChoiceType}
-                                />
-                                Yes/No
-                              </label>
-                            </div>
-                            <div>
-                              <label>
-                                <input
-                                  type="radio"
-                                  name="multipleChoiceType"
-                                  value="agreeDisagreeNeutral"
-                                  onChange={handleMultipleChoiceType}
-                                />
-                                Agree/Disagree/Neutral
-                              </label>
-                            </div>
-                            <div>
-                              <label>
-                                <input
-                                  type="radio"
-                                  name="multipleChoiceType"
-                                  value="completelyDisagreeAgree"
-                                  onChange={handleMultipleChoiceType}
-                                />
-                                Completely Disagree/Disagree/Neutral/Agree/Completely Agree
-                              </label>
-                            </div>
-                          </div>
+                          <Accordion expanded={expanded} onChange={handleAccordionChange}>
+                            <AccordionSummary
+                              expandIcon={<ExpandMoreIcon sx={{ fontSize: 32 }} />}
+                              aria-controls="panel1bh-content"
+                              id="panel1bh-header"
+                            >
+                              <Typography variant="body1" sx={{ mb: 1 }}>
+                                Multiple Choice Option Type
+                              </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                              {values.type == '0' && (
+                                <div>
+                                  <RadioGroup
+                                    name="multipleChoiceType"
+                                    value={multipleChoiceType}
+                                    onChange={handleMultipleChoiceType}
+                                  >
+                                    <FormControlLabel
+                                      value="yesNo"
+                                      control={<Radio />}
+                                      label="Yes/No"
+                                    />
+                                    <FormControlLabel
+                                      value="agreeDisagreeNeutral"
+                                      control={<Radio />}
+                                      label="Agree/Disagree/Neutral"
+                                    />
+                                    <FormControlLabel
+                                      value="completelyDisagreeAgree"
+                                      control={<Radio />}
+                                      label="Completely Disagree/Disagree/Neutral/Agree/Completely Agree"
+                                    />
+                                  </RadioGroup>
+                                </div>
+                              )}
+                            </AccordionDetails>
+                          </Accordion>
                         )}
                       </Grid>
 

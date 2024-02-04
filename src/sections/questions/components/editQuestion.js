@@ -11,8 +11,15 @@ import {
   TextField,
   CircularProgress,
   Typography,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   Unstable_Grid2 as Grid
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import editQuestion from '../api/editQuestion';
 import getQuestionById from '../api/getQuestionById';
@@ -39,6 +46,8 @@ export const EditQuestion = () => {
   const [values, setValues] = useState(null);
   const [test, setTest] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [multipleChoiceType, setMultipleChoiceType] = useState('');
+  const [expanded, setExpanded] = useState(false);
 
 
   const router = useRouter();
@@ -62,12 +71,15 @@ export const EditQuestion = () => {
 
     fetchData();
   }, [id, testId]);
-  
+
+  const handleAccordionChange = () => {
+    setExpanded(!expanded);
+  };
 
   const handleChange = useCallback(
     (event) => {
       const { name, value } = event.target;
-  
+
       if (name === 'type') {
         // When the question type changes, reset options to an empty array
         setValues((prevState) => ({
@@ -75,7 +87,7 @@ export const EditQuestion = () => {
           type: value,
           options: [],
         }));
-        
+
         // Automatically add two options for multiple choice
         if (value === '0') {
           setValues((prevState) => ({
@@ -99,7 +111,7 @@ export const EditQuestion = () => {
           }
           return option;
         });
-  
+
         setValues((prevState) => ({
           ...prevState,
           options: updatedOptions,
@@ -114,7 +126,7 @@ export const EditQuestion = () => {
             [language]: value,
           },
         }));
-        
+
       } else {
         setValues((prevState) => ({
           ...prevState,
@@ -124,7 +136,7 @@ export const EditQuestion = () => {
     },
     [values]
   );
-  
+
 
   const handleAddOption = () => {
     // Add two new empty options to the options array for multiple choice
@@ -133,7 +145,7 @@ export const EditQuestion = () => {
         ...prevState,
         options: [
           ...prevState.options,
-          { english: '', persian: '' }        ],
+          { english: '', persian: '' }],
       }));
     } else {
       // For other types, add a single empty option
@@ -189,6 +201,8 @@ export const EditQuestion = () => {
           ],
         }));
     }
+
+    setMultipleChoiceType(value);
   };
 
   const handleSubmit = useCallback(
@@ -197,7 +211,7 @@ export const EditQuestion = () => {
 
       try {
         // Check if required fields are filled
-        if (!values?.questionText?.english || !values?.level ) {
+        if (!values?.questionText?.english || !values?.level) {
           alert('Please fill in the required fields.');
           return;
         }
@@ -213,12 +227,12 @@ export const EditQuestion = () => {
         };
 
         // Call the API to post the question data
-        const apiResponse = await editQuestion(values.id,questionData);
+        const apiResponse = await editQuestion(values.id, questionData);
 
         // Navigate based on the button clicked
         if (event.target.innerText === 'Finish') {
           router.push(`/test/${test.id}`);
-        } 
+        }
 
       } catch (error) {
         console.error('Error submitting the question:', error);
@@ -252,7 +266,7 @@ export const EditQuestion = () => {
                   <TextField
                     fullWidth
                     multiline
-                    rows={4} 
+                    rows={4}
                     label="English Title"
                     name="questionText.english"
                     onChange={handleChange}
@@ -325,53 +339,49 @@ export const EditQuestion = () => {
                   </TextField>
                 </Grid>
 
-                <Grid
-                  xs={12}
-                  md={12}
-                >
+                <Grid xs={12} md={12}>
                   {/* Radio buttons for multiple-choice options */}
                   {values?.type == '0' && (
-                    <div>
-                      <Typography variant="body1" sx={{ color: '#777', mb: 1 }}>
-                        Multiple Choice Type:
-                      </Typography>
-                      <div>
-                        <label>
-                          <input
-                            type="radio"
-                            name="multipleChoiceType"
-                            value="yesNo"
-                            onChange={handleMultipleChoiceType}
-                          />
-                          Yes/No
-                        </label>
-                      </div>
-                      <div>
-                        <label>
-                          <input
-                            type="radio"
-                            name="multipleChoiceType"
-                            value="agreeDisagreeNeutral"
-                            onChange={handleMultipleChoiceType}
-                          />
-                          Agree/Disagree/Neutral
-                        </label>
-                      </div>
-                      <div>
-                        <label>
-                          <input
-                            type="radio"
-                            name="multipleChoiceType"
-                            value="completelyDisagreeAgree"
-                            onChange={handleMultipleChoiceType}
-                          />
-                          Completely Disagree/Disagree/Neutral/Agree/Completely Agree
-                        </label>
-                      </div>
-                    </div>
+                    <Accordion expanded={expanded} onChange={handleAccordionChange}>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon sx={{ fontSize: 32 }} />}
+                        aria-controls="panel1bh-content"
+                        id="panel1bh-header"
+                      >
+                        <Typography variant="body1" sx={{ mb: 1 }}>
+                          Multiple Choice Option Type
+                        </Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        {values?.type == '0' && (
+                          <div>
+                            <RadioGroup
+                              name="multipleChoiceType"
+                              value={multipleChoiceType}
+                              onChange={handleMultipleChoiceType}
+                            >
+                              <FormControlLabel
+                                value="yesNo"
+                                control={<Radio />}
+                                label="Yes/No"
+                              />
+                              <FormControlLabel
+                                value="agreeDisagreeNeutral"
+                                control={<Radio />}
+                                label="Agree/Disagree/Neutral"
+                              />
+                              <FormControlLabel
+                                value="completelyDisagreeAgree"
+                                control={<Radio />}
+                                label="Completely Disagree/Disagree/Neutral/Agree/Completely Agree"
+                              />
+                            </RadioGroup>
+                          </div>
+                        )}
+                      </AccordionDetails>
+                    </Accordion>
                   )}
                 </Grid>
-
                 <Grid
                   xs={12}
                   md={6}
@@ -396,7 +406,7 @@ export const EditQuestion = () => {
                     Add Option
                   </Button>
                 </Grid>
-                
+
                 {/* Render Options */}
                 {values?.options?.map((option, index) => (
                   <>
