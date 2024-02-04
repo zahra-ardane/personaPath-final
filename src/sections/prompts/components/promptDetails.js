@@ -47,10 +47,10 @@ const PromptDetails = () => {
 
       <Divider sx={{ my: 2 }} />
 
-      <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
-        Text: 
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
+        Prompt Text: 
       </Typography>
-      <Typography sx={{ mb: 2}}>
+      <Typography sx={{ mb: 2, ml: 2}}>
         {prompt?.text}
       </Typography>
 

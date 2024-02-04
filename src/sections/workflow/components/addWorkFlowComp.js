@@ -241,7 +241,8 @@ export const AddWorkflow = () => {
         const createdWorfklow = await postWorkflow(data);
         // console.log("this is createdWorkflow", createdWorfklow);
 
-        router.reload();
+        router.push(`/workflow/workflows`)
+        // router.reload();
       } catch (error) {
         console.error('Error submitting the workflow:', error);
       }

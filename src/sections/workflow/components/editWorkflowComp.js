@@ -319,7 +319,8 @@ export const EditWorkflow = () => {
         const editedWorkflow = await editWorkflow(data, id);
         // console.log("this is editedWorkflow", editedWorkflow);
 
-        router.reload();
+        // router.reload();
+        router.push(`/workflow/workflows`);
       } catch (error) {
         console.error('Error submitting the workflow in edit:', error);
       }

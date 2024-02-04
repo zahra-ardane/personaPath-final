@@ -73,7 +73,10 @@ const RuleDetails = () => {
                     <Typography component="span" sx={{ fontWeight: 'bold' }}>
                       Option {item.optionNo + 1}
                     </Typography>
-                     - {item.option.english || 'Not Available'}
+                    {rule?.type == '0'
+                      ? "-" + item.option.english || 'Not Available' 
+                      : ''
+                    }
                   </span>
                 </Typography>
 

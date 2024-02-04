@@ -62,8 +62,8 @@ export const EditPrompt = () => {
 
         await editPrompt(values.id, data);
 
-        router.reload();
-        // router.push('/prompts/promptList');
+        // router.reload();
+        router.push('/prompts/promptList');
       } catch (error) {
         console.error('Error editting prompt:', error);
       }
